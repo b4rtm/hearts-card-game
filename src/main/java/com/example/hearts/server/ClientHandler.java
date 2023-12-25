@@ -10,6 +10,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class ClientHandler implements Runnable{
 
     private Player player;
@@ -42,8 +44,18 @@ public class ClientHandler implements Runnable{
             List<Player> players = new ArrayList<>();
             players.add(player);
             server.getRooms().get(0).setPlayers(players);
+            outputStream.writeUTF("ROOMS");
             outputStream.writeObject(server.getRooms());
-        } catch (IOException | ClassNotFoundException e) {
+            sleep(15000);
+            server.getRooms().add(new Room(6));
+            List<Player> players2 = new ArrayList<>();
+            players2.add(new Player(44));
+            server.getRooms().get(1).setPlayers(players2);
+            outputStream.writeUTF("ROOMS");
+            List <Room> rooms = new ArrayList<>(server.getRooms());
+            outputStream.writeObject(rooms);
+
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
             System.out.println("nie udało się wysłać obiektu");
             return;
         }
