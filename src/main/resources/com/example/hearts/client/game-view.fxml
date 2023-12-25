@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="815.0" style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane layoutX="590.0" layoutY="21.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
+         <children>
+            <Label layoutX="47.0" layoutY="42.0" text="-" />
+            <Label layoutX="134.0" layoutY="33.0" text="-" />
+            <Label layoutX="47.0" layoutY="144.0" prefHeight="17.0" prefWidth="5.0" text="-" />
+            <Label layoutX="132.0" layoutY="136.0" prefHeight="17.0" prefWidth="5.0" text="-" />
+            <Label layoutX="26.0" layoutY="14.0" text="GRACZ 1" />
+            <Label layoutX="116.0" layoutY="14.0" text="GRACZ 2" />
+            <Label layoutX="26.0" layoutY="104.0" text="GRACZ 3" />
+            <Label layoutX="116.0" layoutY="104.0" text="GRACZ 4" />
+            <Label layoutX="43.0" layoutY="65.0" text="0" />
+            <Label layoutX="131.0" layoutY="73.0" text="0" />
+            <Label layoutX="46.0" layoutY="169.0" text="0" />
+            <Label layoutX="131.0" layoutY="169.0" text="0" />
+         </children>
+      </Pane>
+   </children>
+</Pane>
