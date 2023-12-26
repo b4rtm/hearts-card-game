@@ -7,18 +7,19 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Server {
 
     public static final int PORT = 9997;
-    private final List<ObjectOutputStream> clientOutputStreams;
+    private final  List<ObjectOutputStream> clientOutputStreams;
     private List<Room> rooms;
 
 
     public Server() {
-        clientOutputStreams = new ArrayList<>();
-        rooms = new ArrayList<>();
+        clientOutputStreams = Collections.synchronizedList(new ArrayList<>());
+        rooms = Collections.synchronizedList(new ArrayList<>());
     }
 
     public List<Room> getRooms() {

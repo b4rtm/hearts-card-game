@@ -24,8 +24,9 @@ public class ServerCommunicationHandler {
         }
     }
 
-    public void sendToServer(Object data) {
+    public void sendToServer(String action, Object data) {
         try {
+            outputStream.writeUTF(action);
             outputStream.writeObject(data);
             outputStream.flush();
         } catch (IOException e) {

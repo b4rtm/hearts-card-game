@@ -5,14 +5,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hearts.client.HelloController">
+<Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="815.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label layoutX="322.0" layoutY="40.0" text="POKOJE">
          <font>
             <Font name="Arial Black" size="37.0" />
          </font>
       </Label>
-      <Button fx:id="newRoom" layoutX="350.0" layoutY="123.0" mnemonicParsing="false" onAction="#createNewRoom" text="Stwórz nowy pokój" />
       <Label layoutX="348.0" layoutY="198.0" text="Istniejące pokoje">
          <font>
             <Font name="Arial" size="16.0" />

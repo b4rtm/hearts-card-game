@@ -1,5 +1,6 @@
 package com.example.hearts.client;
 
+import com.example.hearts.JoinRoomRequest;
 import com.example.hearts.Room;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -31,18 +32,20 @@ public class HelloController {
 
     private ListView<Room> roomsList;
 
-    @FXML
-    private Button newRoom;
+    private Button newRoomButton;
 
 
     public void init() {
         this.serverCommunication = new ServerCommunicationHandler();
         serverCommunication.connectToServer("localhost", 9997);
+
+
+
     }
 
     @FXML
-    void addPlayer(ActionEvent event) {
-        serverCommunication.sendToServer(nameField.getText());
+    synchronized void addPlayer(ActionEvent event) {
+        serverCommunication.sendToServer("NAME", nameField.getText());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("rooms-view.fxml"));
         Pane nowyWidok;
@@ -64,12 +67,19 @@ public class HelloController {
         roomsList.setPrefWidth(200.0);
         nowyWidok.getChildren().add(roomsList);
 
+        newRoomButton = new Button("Stwórz nowy pokój");
+        newRoomButton.setLayoutX(350.0);
+        newRoomButton.setLayoutY(123.0);
+        newRoomButton.setMnemonicParsing(false);
+        newRoomButton.setOnAction(this::createNewRoom);
+        nowyWidok.getChildren().add(newRoomButton);
+
         Thread readMessagesThread = new Thread(() -> serverCommunication.readMessagesFromServer(this));
         readMessagesThread.start();
     }
 
-    @FXML
-    void createNewRoom(ActionEvent event) {
+
+    synchronized void createNewRoom(ActionEvent event) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("game-view.fxml"));
         Pane root;
         try {
@@ -79,18 +89,21 @@ public class HelloController {
         }
 
 
+        serverCommunication.sendToServer("CREATE_ROOM", new JoinRoomRequest(12,32));
 
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) newRoom.getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+        Platform.runLater(() -> {
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) newRoomButton.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        });
     }
     public void onClose() {
         // Wywołane przy zamknięciu aplikacji, może zawierać zamykanie połączenia
         serverCommunication.closeConnection();
     }
 
-    public void updateRoomsList(List<Room> rooms) {
+    synchronized public void updateRoomsList(List<Room> rooms) {
         Platform.runLater(() -> {
             roomsList.getItems().clear();
             roomsList.getItems().addAll(rooms);
