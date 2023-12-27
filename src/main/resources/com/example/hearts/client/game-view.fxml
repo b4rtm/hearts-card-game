@@ -7,10 +7,10 @@
    <children>
       <Pane fx:id="pane2" layoutX="590.0" layoutY="21.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
          <children>
-            <Label fx:id="name1" layoutX="47.0" layoutY="42.0" text="-" />
-            <Label fx:id="name2" layoutX="132.0" layoutY="42.0" text="-" />
-            <Label fx:id="name3" layoutX="47.0" layoutY="136.0" prefHeight="17.0" prefWidth="5.0" text="-" />
-            <Label fx:id="name4" layoutX="132.0" layoutY="136.0" prefHeight="17.0" prefWidth="5.0" text="-" />
+            <Label fx:id="name1" layoutX="26.0" layoutY="42.0" prefHeight="17.0" prefWidth="47.0" text="-" />
+            <Label fx:id="name2" layoutX="116.0" layoutY="42.0" prefHeight="17.0" prefWidth="47.0" text="-" />
+            <Label fx:id="name3" layoutX="26.0" layoutY="136.0" prefHeight="17.0" prefWidth="47.0" text="-" />
+            <Label fx:id="name4" layoutX="118.0" layoutY="136.0" prefHeight="17.0" prefWidth="47.0" text="-" />
             <Label layoutX="26.0" layoutY="14.0" text="GRACZ 1" />
             <Label layoutX="116.0" layoutY="14.0" text="GRACZ 2" />
             <Label layoutX="26.0" layoutY="104.0" text="GRACZ 3" />

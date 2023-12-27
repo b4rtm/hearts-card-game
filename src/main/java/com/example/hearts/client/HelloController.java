@@ -32,6 +32,8 @@ public class HelloController {
     @FXML
     private Pane pane;
 
+    private Pane root;
+
     @FXML
     private TextField nameField;
 
@@ -98,19 +100,7 @@ public class HelloController {
     }
 
     private void displayGameView(Room room) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("game-view.fxml"));
-        Pane root;
-        try {
-            root = loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         Platform.runLater(() -> {
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) newRoomButton.getScene().getWindow();
-            stage.setScene(scene);
-
             Pane innerPane = (Pane) root.lookup("#pane1");
             int counter=1;
             for (Player player : room.getPlayers()){
@@ -120,9 +110,6 @@ public class HelloController {
                 nameLabel.setText(player.getName());
                 counter++;
             }
-
-
-            stage.show();
         });
     }
 
@@ -147,8 +134,22 @@ public class HelloController {
                 Room selectedRoom = roomsList.getSelectionModel().getSelectedItem();
                 if (selectedRoom != null && (selectedRoom.getPlayers() == null || selectedRoom.getPlayers().size() < 4)) {
                     serverCommunication.sendToServer("JOIN_ROOM", selectedRoom.getRoomId());
+                    loadGameView();
                 }
             });
         });
+    }
+
+    private void loadGameView() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("game-view.fxml"));
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) newRoomButton.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 }
