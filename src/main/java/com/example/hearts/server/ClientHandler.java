@@ -1,8 +1,6 @@
 package com.example.hearts.server;
 
-import com.example.hearts.JoinRoomRequest;
-import com.example.hearts.Player;
-import com.example.hearts.Room;
+import com.example.hearts.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -98,6 +96,7 @@ public class ClientHandler implements Runnable{
 
                         if(room.getPlayers().size() == 4){
                             broadcastToRoom("START", "starcik", room);
+                            List<Card> deck = DeckInitializer.initializeDeck();
                         }
                         break;
                 }
@@ -148,60 +147,5 @@ public class ClientHandler implements Runnable{
         outputStr.writeObject(data);
         outputStr.flush();
     }
-
-//    private void updateNewOrder(Reservation newReservation) { // rozsyla wszystkim
-//        for (ObjectOutputStream out : server.getClientOutputStreams()){
-//            if (out == null)
-//                continue;
-//            try {
-//                out.writeObject(newReservation);
-//            } catch (IOException e) {
-//                System.out.println("nie udało się wysłać obiektu");
-//                throw new RuntimeException(e);
-//            }
-//        }
-//    }
-//
-//    private synchronized Reservation listenToNewOrders() {
-//        try {
-//            Reservation newReservation = (Reservation) inputStream.readObject();
-//
-//            if(newReservation.getHour() == 0)
-//                return newReservation;
-//
-//            for (Reservation reservation : server.getSchedule()){
-//                if (searchReservation(newReservation, reservation)){
-//                    int index = server.getSchedule().indexOf(reservation);
-//                    server.getSchedule().set(index, newReservation);
-//                    return newReservation;
-//                }
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            System.out.println("nie udało się odczytać obiektu");
-//            throw new RuntimeException();
-//        }
-//        return null;
-//    }
-//
-//    private static boolean searchReservation(Reservation newReservation, Reservation reservation) {
-//        return reservation.getHour() == newReservation.getHour() && reservation.getDayOfWeek() == newReservation.getDayOfWeek();
-//    }
-//
-//    public void close(){
-//        try{
-//            if(socket != null){
-//                socket.close();
-//            }
-//            if(outputStream != null){
-//                outputStream.close();
-//            }
-//            if(inputStream != null){
-//                inputStream.close();
-//            }
-//        }
-//        catch (IOException e){
-//            System.out.println("Nie udało się zamknąć zasobu");
-//        }
-//    }
 
 }
