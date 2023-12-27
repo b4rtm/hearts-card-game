@@ -11,6 +11,7 @@ public class Player implements Serializable {
     private List<Card> cards = new ArrayList<>();
     private int points;
 
+
     public Player(int id) {
         this.id = id;
     }

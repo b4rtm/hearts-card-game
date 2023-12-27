@@ -24,10 +24,12 @@ public class ClientHandler implements Runnable{
     private final Server server;
 
     public ClientHandler(Socket socket, int id, Server server, ObjectOutputStream outputStream) {
+
         this.socket = socket;
         this.player = new Player(id);
         this.server = server;
         this.outputStream = outputStream;
+        server.getClientOutputStreams().put(this.player, outputStream);
         try{
             this.inputStream = new ObjectInputStream(socket.getInputStream());
         }
@@ -93,6 +95,10 @@ public class ClientHandler implements Runnable{
                         Room room = findRoomById(server.getRooms(), roomId);
                         room.getPlayers().add(player);
                         broadcastToAll("ROOMS", server.getRooms());
+
+                        if(room.getPlayers().size() == 4){
+                            broadcastToRoom("START", "starcik", room);
+                        }
                         break;
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -117,9 +123,19 @@ public class ClientHandler implements Runnable{
     }
 
     private void broadcastToAll(String action, Object data) {
-        for (ObjectOutputStream outputStr : server.getClientOutputStreams()) {
+        for (ObjectOutputStream outputStr : server.getClientOutputStreams().values()) {
             try {
                 sendMessage(action, data, outputStr);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void broadcastToRoom(String action, Object data, Room room) {
+        for (Player player1 : room.getPlayers()) {
+            try {
+                sendMessage(action, data, server.getClientOutputStreams().get(player1));
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -48,6 +48,10 @@ public class ServerCommunicationHandler {
                         List<Room> newRoom = (List<Room>) inputStream.readObject();
                         controller.updateRoomsList(newRoom);
                         break;
+                    case "START":
+                        String mess = (String) inputStream.readObject();
+                        System.out.println(mess);
+                        break;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

@@ -1,24 +1,23 @@
 package com.example.hearts.server;
 
+import com.example.hearts.Player;
 import com.example.hearts.Room;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Server {
 
     public static final int PORT = 9997;
-    private final  List<ObjectOutputStream> clientOutputStreams;
+    private final Map<Player, ObjectOutputStream> clientOutputStreams;
     private List<Room> rooms;
 
 
     public Server() {
-        clientOutputStreams = Collections.synchronizedList(new ArrayList<>());
+        clientOutputStreams = Collections.synchronizedMap(new HashMap<>());
         rooms = Collections.synchronizedList(new ArrayList<>());
     }
 
@@ -26,7 +25,7 @@ public class Server {
         return rooms;
     }
 
-    public List<ObjectOutputStream> getClientOutputStreams() {
+    public Map<Player,ObjectOutputStream> getClientOutputStreams() {
         return clientOutputStreams;
     }
 
@@ -43,7 +42,7 @@ public class Server {
                     System.out.println("zaakceptowano klienta o id " + clientCounter);
 
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                    server.clientOutputStreams.add(out);
+
 
                     ClientHandler clientHandler = new ClientHandler(socket, clientCounter, server, out);
                     clientCounter++;
