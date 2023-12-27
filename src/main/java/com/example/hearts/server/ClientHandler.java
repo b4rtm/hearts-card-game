@@ -80,13 +80,19 @@ public class ClientHandler implements Runnable{
                         String name = (String) inputStream.readObject();
                         player.setName(name);
                         System.out.println("new player : " + name);
+                        sendMessage("PLAYER", player, outputStream);
                         break;
                     case "CREATE_ROOM":
-                        JoinRoomRequest joinRoomRequest = (JoinRoomRequest) inputStream.readObject();
-                        Room newRoom = new Room(generateRoomId(), new ArrayList<>(Arrays.asList(player)));
+                        inputStream.readObject();
+                        Room newRoom = new Room(generateRoomId());
                         server.getRooms().add(newRoom);
-                        List<Room> rooms = new ArrayList<>(server.getRooms());
-                        broadcastToAll("ROOMS", rooms);
+                        broadcastToAll("ROOMS", server.getRooms());
+                        break;
+                    case "JOIN_ROOM":
+                        Integer roomId = (Integer) inputStream.readObject();
+                        Room room = findRoomById(server.getRooms(), roomId);
+                        room.getPlayers().add(player);
+                        broadcastToAll("ROOMS", server.getRooms());
                         break;
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -97,6 +103,15 @@ public class ClientHandler implements Runnable{
 
     }
 
+    public Room findRoomById(List<Room> rooms, int targetId) {
+        for (Room room : rooms) {
+            if (room.getRoomId() == targetId) {
+                return room;
+            }
+        }
+        return null;
+    }
+
     private int generateRoomId(){
         return server.getRooms().size() + 1;
     }
@@ -104,13 +119,18 @@ public class ClientHandler implements Runnable{
     private void broadcastToAll(String action, Object data) {
         for (ObjectOutputStream outputStr : server.getClientOutputStreams()) {
             try {
-                outputStr.writeUTF(action);
-                outputStr.writeObject(data);
-                outputStr.flush();
+                sendMessage(action, data, outputStr);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void sendMessage(String action, Object data, ObjectOutputStream outputStr) throws IOException {
+        outputStr.reset();
+        outputStr.writeUTF(action);
+        outputStr.writeObject(data);
+        outputStr.flush();
     }
 
 //    private void updateNewOrder(Reservation newReservation) { // rozsyla wszystkim

@@ -1,6 +1,6 @@
 package com.example.hearts.client;
 
-import com.example.hearts.JoinRoomRequest;
+import com.example.hearts.Player;
 import com.example.hearts.Room;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -16,10 +17,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class HelloController {
 
     private ServerCommunicationHandler serverCommunication;
+
+    private Player player;
 
     @FXML
     private Button joinButton;
@@ -39,8 +44,14 @@ public class HelloController {
         this.serverCommunication = new ServerCommunicationHandler();
         serverCommunication.connectToServer("localhost", 9997);
 
+    }
 
+    public Player getPlayer() {
+        return player;
+    }
 
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     @FXML
@@ -67,6 +78,8 @@ public class HelloController {
         roomsList.setPrefWidth(200.0);
         nowyWidok.getChildren().add(roomsList);
 
+
+
         newRoomButton = new Button("Stwórz nowy pokój");
         newRoomButton.setLayoutX(350.0);
         newRoomButton.setLayoutY(123.0);
@@ -79,7 +92,12 @@ public class HelloController {
     }
 
 
-    synchronized void createNewRoom(ActionEvent event) {
+    public void createNewRoom(ActionEvent event) {
+        serverCommunication.sendToServer("CREATE_ROOM", 0);
+//        displayGameView();
+    }
+
+    private void displayGameView(Room room) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("game-view.fxml"));
         Pane root;
         try {
@@ -88,16 +106,26 @@ public class HelloController {
             throw new RuntimeException(e);
         }
 
-
-        serverCommunication.sendToServer("CREATE_ROOM", new JoinRoomRequest(12,32));
-
         Platform.runLater(() -> {
             Scene scene = new Scene(root);
             Stage stage = (Stage) newRoomButton.getScene().getWindow();
             stage.setScene(scene);
+
+            Pane innerPane = (Pane) root.lookup("#pane1");
+            int counter=1;
+            for (Player player : room.getPlayers()){
+                Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
+                pointsLabel.setText(String.valueOf(player.getPoints()));
+                Label nameLabel = (Label) innerPane.lookup("#name" + counter);
+                nameLabel.setText(player.getName());
+                counter++;
+            }
+
+
             stage.show();
         });
     }
+
     public void onClose() {
         // Wywołane przy zamknięciu aplikacji, może zawierać zamykanie połączenia
         serverCommunication.closeConnection();
@@ -107,6 +135,20 @@ public class HelloController {
         Platform.runLater(() -> {
             roomsList.getItems().clear();
             roomsList.getItems().addAll(rooms);
+
+            for (Room room : rooms) {
+                if (room.getPlayers().contains(player)) {
+                    displayGameView(room);
+                    break;
+                }
+            }
+
+            roomsList.setOnMouseClicked(event -> {
+                Room selectedRoom = roomsList.getSelectionModel().getSelectedItem();
+                if (selectedRoom != null && (selectedRoom.getPlayers() == null || selectedRoom.getPlayers().size() < 4)) {
+                    serverCommunication.sendToServer("JOIN_ROOM", selectedRoom.getRoomId());
+                }
+            });
         });
     }
 }

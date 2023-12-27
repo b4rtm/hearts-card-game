@@ -1,6 +1,8 @@
 package com.example.hearts;
 
-public enum Suit {
+import java.io.Serializable;
+
+public enum Suit implements Serializable {
     CLUBS,  // trefl
     SPADES, // pik
     HEARTS, // kier

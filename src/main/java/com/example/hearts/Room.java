@@ -1,13 +1,14 @@
 package com.example.hearts;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Room implements Serializable {
+public class Room implements Serializable  {
 
 
     private int roomId;
-    private List<Player> players;
+    private List<Player> players = new ArrayList<>();
 
     public Room(int id) {
         this.roomId = id;
@@ -36,6 +37,6 @@ public class Room implements Serializable {
 
     @Override
     public String toString() {
-        return "Room ID: " + roomId + ", Players: " +  (players != null ? players.size() : 0);
+        return "#" + roomId + "   " +  (players != null ? players.size() : 0) + "/4";
     }
 }

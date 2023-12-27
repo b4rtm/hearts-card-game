@@ -1,6 +1,8 @@
 package com.example.hearts;
 
-public enum Rank {
+import java.io.Serializable;
+
+public enum Rank implements Serializable {
     TWO,
     THREE,
     FOUR,
