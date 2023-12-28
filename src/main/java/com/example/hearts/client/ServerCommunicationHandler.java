@@ -1,5 +1,7 @@
 package com.example.hearts.client;
 
+import com.example.hearts.Card;
+import com.example.hearts.GameState;
 import com.example.hearts.Player;
 import com.example.hearts.Room;
 
@@ -48,9 +50,10 @@ public class ServerCommunicationHandler {
                         List<Room> newRoom = (List<Room>) inputStream.readObject();
                         controller.updateRoomsList(newRoom);
                         break;
-                    case "START":
-                        String mess = (String) inputStream.readObject();
-                        System.out.println(mess);
+                    case "GAME_STATE":
+                        GameState gameState = (GameState) inputStream.readObject();
+                        for (Card card : gameState.getPlayer().getCards())
+                            System.out.println(card.getImagePath());
                         break;
                 }
             }

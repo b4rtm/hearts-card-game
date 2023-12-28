@@ -5,10 +5,8 @@ import com.example.hearts.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -95,8 +93,10 @@ public class ClientHandler implements Runnable{
                         broadcastToAll("ROOMS", server.getRooms());
 
                         if(room.getPlayers().size() == 4){
-                            broadcastToRoom("START", "starcik", room);
                             List<Card> deck = DeckInitializer.initializeDeck();
+                            DeckInitializer.dealCardsToPlayers(deck, room.getPlayers());
+
+                            broadcastGameStateToRoom("GAME_STATE", room);
                         }
                         break;
                 }
@@ -131,10 +131,14 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    private void broadcastToRoom(String action, Object data, Room room) {
+    private void broadcastGameStateToRoom(String action, Room room) {
+        List<Integer> pointsList = new ArrayList<>();
+        for (Player player : room.getPlayers()) {
+            pointsList.add(player.getPoints());
+        }
         for (Player player1 : room.getPlayers()) {
             try {
-                sendMessage(action, data, server.getClientOutputStreams().get(player1));
+                sendMessage(action, new GameState(player1, pointsList), server.getClientOutputStreams().get(player1));
             } catch (IOException e) {
                 e.printStackTrace();
             }

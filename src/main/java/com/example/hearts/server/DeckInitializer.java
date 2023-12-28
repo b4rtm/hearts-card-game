@@ -1,10 +1,12 @@
 package com.example.hearts.server;
 
 import com.example.hearts.Card;
+import com.example.hearts.Player;
 import com.example.hearts.Rank;
 import com.example.hearts.Suit;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DeckInitializer {
@@ -22,7 +24,7 @@ public class DeckInitializer {
                 deck.add(card);
             }
         }
-
+        Collections.shuffle(deck);
         return deck;
     }
 
@@ -48,6 +50,14 @@ public class DeckInitializer {
                 return "10";
             default:
                 return rank.toString().toLowerCase();
+        }
+    }
+
+    public static void dealCardsToPlayers(List<Card> deck, List<Player> players) {
+        for (int i = 0; i < players.size(); i++) {
+            for (int j = i; j < deck.size(); j += players.size()) {
+                players.get(i).getCards().add(deck.get(j));
+            }
         }
     }
 }
