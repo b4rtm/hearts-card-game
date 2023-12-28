@@ -2,13 +2,16 @@ package com.example.hearts;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Room implements Serializable  {
 
 
     private int roomId;
     private List<Player> players = new ArrayList<>();
+    private Map<Integer, Card> cardsOnTable = new HashMap<>();
 
     public Room(int id) {
         this.roomId = id;
@@ -33,6 +36,14 @@ public class Room implements Serializable  {
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+
+    public Map<Integer, Card> getCardsOnTable() {
+        return cardsOnTable;
+    }
+
+    public void setCardsOnTable(Map<Integer, Card> cardsOnTable) {
+        this.cardsOnTable = cardsOnTable;
     }
 
     @Override

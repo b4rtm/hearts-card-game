@@ -1,7 +1,6 @@
 package com.example.hearts.client;
 
-import com.example.hearts.Player;
-import com.example.hearts.Room;
+import com.example.hearts.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -104,12 +105,45 @@ public class HelloController {
             Pane innerPane = (Pane) root.lookup("#pane1");
             int counter=1;
             for (Player player : room.getPlayers()){
-                Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
-                pointsLabel.setText(String.valueOf(player.getPoints()));
                 Label nameLabel = (Label) innerPane.lookup("#name" + counter);
                 nameLabel.setText(player.getName());
                 counter++;
             }
+        });
+    }
+
+    public void updateGameView(GameState gameState){
+        Platform.runLater(() -> {
+            Pane innerPane = (Pane) root.lookup("#pane1");
+            int counter=1;
+            for (Integer points : gameState.getPoints()){
+                Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
+                pointsLabel.setText(String.valueOf(points));
+                counter++;
+            }
+
+            for (int cardCounter=1; cardCounter<=gameState.getPlayer().getCards().size(); cardCounter++){
+                ImageView card = (ImageView) root.lookup("#card" + cardCounter);
+                Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + gameState.getPlayer().getCards().get(cardCounter-1).getImagePath());
+                card.setImage(cardImage);
+
+                int finalCardCounter = cardCounter;
+                card.setOnMouseClicked(event -> serverCommunication.sendToServer("MOVE", new Move(gameState.getPlayer().getCards().get(finalCardCounter -1), gameState.getPlayer())));
+            }
+
+            for (int blankCardCounter = gameState.getPlayer().getCards().size(); blankCardCounter<=13;blankCardCounter++){
+                ImageView card = (ImageView) root.lookup("#card" + blankCardCounter);
+                card.setImage(null);
+            }
+
+            Card yourCardOnTable = gameState.getCardsOnTable().get(gameState.getPlayer().getId());
+            if(yourCardOnTable != null) {
+                ImageView card = (ImageView) root.lookup("#yourCard");
+                Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + yourCardOnTable.getImagePath());
+                card.setImage(cardImage);
+            }
+
+
         });
     }
 

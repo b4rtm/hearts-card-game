@@ -52,8 +52,7 @@ public class ServerCommunicationHandler {
                         break;
                     case "GAME_STATE":
                         GameState gameState = (GameState) inputStream.readObject();
-                        for (Card card : gameState.getPlayer().getCards())
-                            System.out.println(card.getImagePath());
+                        controller.updateGameView(gameState);
                         break;
                 }
             }

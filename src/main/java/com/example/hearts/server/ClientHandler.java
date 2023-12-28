@@ -19,6 +19,10 @@ public class ClientHandler implements Runnable{
     private final ObjectInputStream inputStream;
     private final Server server;
 
+    private Room room;
+
+//    private GameState gameState;
+
     public ClientHandler(Socket socket, int id, Server server, ObjectOutputStream outputStream) {
 
         this.socket = socket;
@@ -96,8 +100,22 @@ public class ClientHandler implements Runnable{
                             List<Card> deck = DeckInitializer.initializeDeck();
                             DeckInitializer.dealCardsToPlayers(deck, room.getPlayers());
 
-                            broadcastGameStateToRoom("GAME_STATE", room);
+                            for (Player player1: room.getPlayers()) {
+                                room.getCardsOnTable().put(player1.getId(), null);
+                            }
+                            this.room = room;
+                            broadcastGameStateToRoom();
                         }
+                        break;
+                    case "MOVE":
+                        Move move = (Move) inputStream.readObject();
+//                        if(!HeartRules.isMoveValid(move, findRoomById(server.getRooms(), gameState.getRoomId()), gameState) )//TODO
+//                            break;
+                        findPlayerById(move.getPlayer().getId()).getCards().remove(move.getCard());
+                        this.room.getCardsOnTable().replace(move.getPlayer().getId(), move.getCard());
+
+                        broadcastGameStateToRoom();
+
                         break;
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -117,6 +135,15 @@ public class ClientHandler implements Runnable{
         return null;
     }
 
+    public Player findPlayerById(int targetId) {
+        for (Player player1 : room.getPlayers()) {
+            if (player1.getId() == targetId) {
+                return player1;
+            }
+        }
+        return null;
+    }
+
     private int generateRoomId(){
         return server.getRooms().size() + 1;
     }
@@ -131,14 +158,15 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    private void broadcastGameStateToRoom(String action, Room room) {
+    private void broadcastGameStateToRoom() {
         List<Integer> pointsList = new ArrayList<>();
         for (Player player : room.getPlayers()) {
             pointsList.add(player.getPoints());
         }
         for (Player player1 : room.getPlayers()) {
             try {
-                sendMessage(action, new GameState(player1, pointsList), server.getClientOutputStreams().get(player1));
+                GameState gameState = new GameState(room.getRoomId(), player1, pointsList, room.getCardsOnTable());
+                sendMessage("GAME_STATE", gameState, server.getClientOutputStreams().get(player1));
             } catch (IOException e) {
                 e.printStackTrace();
             }
