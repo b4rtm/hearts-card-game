@@ -135,19 +135,16 @@ public class ClientHandler implements Runnable{
 
                         broadcastGameStateToRoom();
 
+                        break;
+                    case "CLEAR_TABLE":
+                        Integer roomToCleanId = (Integer) inputStream.readObject();
 
-                        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                        scheduler.schedule(() -> {
-                            if(!getRoomFromServerById().getCardsOnTable().containsValue(null)){
-                                for (Map.Entry<PlayerInfo, Card> entry : getRoomFromServerById().getCardsOnTable().entrySet()) {
-                                    entry.setValue(null);
-                                    broadcastGameStateToRoom();
-                                }
-                            }
-                        }, 2, TimeUnit.SECONDS);
+                        Room roomToClean = findRoomById(server.getRooms(), roomToCleanId);
 
-
-
+                        for (Map.Entry<PlayerInfo, Card> entry : roomToClean.getCardsOnTable().entrySet()) {
+                            entry.setValue(null);
+                            broadcastGameStateToRoom();
+                        }
                         break;
                 }
             } catch (IOException | ClassNotFoundException e) {

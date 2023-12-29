@@ -21,6 +21,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -167,6 +170,13 @@ public class HelloController {
 
             PlayerInfo playerInfoHighest = findPlayerWithHighestId(player.getId(), gameState.getCardsOnTable());
             displayCardOnTable(gameState, playerInfoHighest,"#rightCard");
+
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.schedule(() -> {
+                if(!gameState.getCardsOnTable().containsValue(null)){
+                    serverCommunication.sendToServer("CLEAR_TABLE", gameState.getRoomId());
+                }
+            }, 2, TimeUnit.SECONDS);
 
         });
 
