@@ -108,6 +108,20 @@ public class HelloController {
 
     private void displayGameView(Room room) {
         Platform.runLater(() -> {
+
+            for (int i=1;i<=3;i++){
+                ImageView imageView = (ImageView) root.lookup("#p" + i);
+                imageView.setImage(new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\reverse_card.jpg"));
+            }
+
+            if(room.getPlayers().size() < 4) {
+                for (int cardCounter = 1; cardCounter <= 13; cardCounter++) {
+                    ImageView card = (ImageView) root.lookup("#card" + cardCounter);
+                    Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\reverse_card.jpg");
+                    card.setImage(cardImage);
+                }
+            }
+
             Pane innerPane = (Pane) root.lookup("#pane1");
             int counter=1;
             for (Player player : room.getPlayers()){
@@ -170,6 +184,16 @@ public class HelloController {
 
             PlayerInfo playerInfoHighest = findPlayerWithHighestId(player.getId(), gameState.getCardsOnTable());
             displayCardOnTable(gameState, playerInfoHighest,"#rightCard");
+
+            Label nameLabel = (Label) root.lookup("#l1"); //todo tylko raz
+            nameLabel.setText(playerInfoLowest.getName());
+            nameLabel = (Label) root.lookup("#l2");
+            nameLabel.setText(playerInfoMiddle.getName());
+            nameLabel = (Label) root.lookup("#l3");
+            nameLabel.setText(playerInfoHighest.getName());
+
+
+
 
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.schedule(() -> {
