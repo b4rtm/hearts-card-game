@@ -11,7 +11,7 @@ public class Room implements Serializable  {
 
     private int roomId;
     private List<Player> players = new ArrayList<>();
-    private Map<Integer, Card> cardsOnTable = new HashMap<>();
+    private Map<PlayerInfo, Card> cardsOnTable = new HashMap<>();
     private int turn;
 
     public Room(int id) {
@@ -39,11 +39,11 @@ public class Room implements Serializable  {
         this.players = players;
     }
 
-    public Map<Integer, Card> getCardsOnTable() {
+    public Map<PlayerInfo, Card> getCardsOnTable() {
         return cardsOnTable;
     }
 
-    public void setCardsOnTable(Map<Integer, Card> cardsOnTable) {
+    public void setCardsOnTable(Map<PlayerInfo, Card> cardsOnTable) {
         this.cardsOnTable = cardsOnTable;
     }
 

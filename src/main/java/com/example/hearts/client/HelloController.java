@@ -17,7 +17,10 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -113,46 +116,110 @@ public class HelloController {
     }
 
     public void updateGameView(GameState gameState){
+
         Platform.runLater(() -> {
             Pane innerPane = (Pane) root.lookup("#pane1");
-            int counter=1;
-            for (Integer points : gameState.getPoints()){
-                Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
-                pointsLabel.setText(String.valueOf(points));
-                counter++;
-            }
-        });
+//            int counter=1;
+//            for (Integer points : gameState.getPoints()){
+//                Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
+//                pointsLabel.setText(String.valueOf(points));
+//                counter++;
+//            }
+
 
             for (int cardCounter=1; cardCounter<=gameState.getPlayer().getCards().size(); cardCounter++){
                 ImageView card = (ImageView) root.lookup("#card" + cardCounter);
                 int finalCardCounter1 = cardCounter;
-                Platform.runLater(() -> {
                 Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + gameState.getPlayer().getCards().get(finalCardCounter1 -1).getImagePath());
                 card.setImage(cardImage);
-                });
+
                 int finalCardCounter = cardCounter;
-//                if(gameState.getTurn() == gameState.getPlayer().getId())
+                if(gameState.getTurn() == gameState.getPlayer().getId())
                     card.setOnMouseClicked(event -> {
-                        System.out.println("XD");
                         serverCommunication.sendToServer("MOVE", new Move(gameState.getPlayer().getCards().get(finalCardCounter -1), gameState.getPlayer()));
                     });
+                else{
+                    card.setOnMouseClicked(null);
+                }
 
             }
-        Platform.runLater(() -> {
+
             for (int blankCardCounter = gameState.getPlayer().getCards().size(); blankCardCounter<=13;blankCardCounter++){
                 ImageView card = (ImageView) root.lookup("#card" + blankCardCounter);
                 card.setImage(null);
             }
 
-            Card yourCardOnTable = gameState.getCardsOnTable().get(gameState.getPlayer().getId());
-            if(yourCardOnTable != null) {
-                ImageView card = (ImageView) root.lookup("#yourCard");
-                Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + yourCardOnTable.getImagePath());
-                card.setImage(cardImage);
+            for (Map.Entry<PlayerInfo, Card> entry : gameState.getCardsOnTable().entrySet()) {
+                PlayerInfo playerInfo = entry.getKey();
+                Card card = entry.getValue();
+
+                System.out.println("PlayerInfo ID: " + playerInfo.getId() + ", Card: " + (card == null ? "null" : card.getImagePath()));
             }
 
+            PlayerInfo foundPlayer = getPlayerInfo(gameState);
+            displayCardOnTable(gameState, foundPlayer,"#yourCard");
+
+            PlayerInfo playerInfoLowest = findPlayerWithLowestId(player.getId(), gameState.getCardsOnTable());
+            displayCardOnTable(gameState, playerInfoLowest,"#leftCard");
+
+            PlayerInfo playerInfoMiddle = findPlayerWithMiddleId(player.getId(), gameState.getCardsOnTable());
+            displayCardOnTable(gameState, playerInfoMiddle,"#topCard");
+
+            PlayerInfo playerInfoHighest = findPlayerWithHighestId(player.getId(), gameState.getCardsOnTable());
+            displayCardOnTable(gameState, playerInfoHighest,"#rightCard");
 
         });
+
+
+    }
+
+    private void displayCardOnTable(GameState gameState, PlayerInfo foundPlayer, String elementId) {
+        Card yourCardOnTable = gameState.getCardsOnTable().get(foundPlayer);
+
+        if(yourCardOnTable != null) {
+            ImageView card = (ImageView) root.lookup(elementId);
+            Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + yourCardOnTable.getImagePath());
+            card.setImage(cardImage);
+        }
+        else {
+            ImageView card = (ImageView) root.lookup(elementId);
+            card.setImage(null);
+        }
+    }
+
+    public PlayerInfo findPlayerWithLowestId(int excludedId, Map<PlayerInfo, Card> cardsOnTable) {
+        return cardsOnTable.keySet().stream()
+                .filter(playerInfo -> playerInfo.getId() != excludedId)
+                .min(Comparator.comparingInt(PlayerInfo::getId))
+                .orElse(null);
+    }
+
+    public PlayerInfo findPlayerWithMiddleId(int excludedId, Map<PlayerInfo, Card> cardsOnTable) {
+        return cardsOnTable.keySet().stream()
+                .filter(playerInfo -> playerInfo.getId() != excludedId)
+                .sorted(Comparator.comparingInt(PlayerInfo::getId))
+                .skip(1) // Zawsze pomijamy drugi element, bo zawsze są cztery elementy
+                .findFirst()
+                .orElse(null);
+    }
+
+    public PlayerInfo findPlayerWithHighestId(int excludedId, Map<PlayerInfo, Card> cardsOnTable) {
+        return cardsOnTable.keySet().stream()
+                .filter(playerInfo -> playerInfo.getId() != excludedId)
+                .max(Comparator.comparingInt(PlayerInfo::getId))
+                .orElse(null);
+    }
+
+    private static PlayerInfo getPlayerInfo(GameState gameState) {
+        PlayerInfo foundPlayer = null;
+        Set<PlayerInfo> playerInfos = gameState.getCardsOnTable().keySet();
+        for (PlayerInfo playerInfo : playerInfos) {
+            if (playerInfo.getId() == gameState.getPlayer().getId()) {
+                foundPlayer = playerInfo;
+                break;
+            }
+        }
+        return foundPlayer;
     }
 
     public void onClose() {

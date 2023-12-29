@@ -8,6 +8,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.sleep;
 
@@ -102,10 +107,10 @@ public class ClientHandler implements Runnable{
                             DeckInitializer.dealCardsToPlayers(deck, room.getPlayers());
 
                             for (Player player1: room.getPlayers()) {
-                                room.getCardsOnTable().put(player1.getId(), null);
+                                room.getCardsOnTable().put(new PlayerInfo(player1.getId(), player1.getName(), player1.getPoints()), null);
                             }
                             server.getRooms().set(server.getRooms().indexOf(findRoomById(server.getRooms(),this.roomId)),room);
-                            findRoomById(server.getRooms(),this.roomId).setTurn(room.getPlayers().get(0).getId());
+                            getRoomFromServerById().setTurn(room.getPlayers().get(0).getId());
                             broadcastGameStateToRoom();
                         }
                         break;
@@ -113,11 +118,35 @@ public class ClientHandler implements Runnable{
                         Move move = (Move) inputStream.readObject();
 //                        if(!HeartRules.isMoveValid(move, findRoomById(server.getRooms(), gameState.getRoomId()), gameState) )//TODO
 //                            break;
-                        findRoomById(server.getRooms(),this.roomId).findPlayerById(move.getPlayer().getId()).getCards().remove(move.getCard());
-                        findRoomById(server.getRooms(),this.roomId).getCardsOnTable().replace(move.getPlayer().getId(), move.getCard());
-                        findRoomById(server.getRooms(),this.roomId).setNextTurn();
+                        getRoomFromServerById().findPlayerById(move.getPlayer().getId()).getCards().remove(move.getCard());
+
+
+                        PlayerInfo foundPlayer = null;
+                        Set<PlayerInfo> playerInfos = getRoomFromServerById().getCardsOnTable().keySet();
+                        for (PlayerInfo playerInfo : playerInfos) {
+                            if (playerInfo.getId() == move.getPlayer().getId()) {
+                                foundPlayer = playerInfo;
+                                break;
+                            }
+                        }
+                        getRoomFromServerById().getCardsOnTable().replace(foundPlayer, move.getCard());
+
+                        getRoomFromServerById().setNextTurn();
 
                         broadcastGameStateToRoom();
+
+
+                        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+                        scheduler.schedule(() -> {
+                            if(!getRoomFromServerById().getCardsOnTable().containsValue(null)){
+                                for (Map.Entry<PlayerInfo, Card> entry : getRoomFromServerById().getCardsOnTable().entrySet()) {
+                                    entry.setValue(null);
+                                    broadcastGameStateToRoom();
+                                }
+                            }
+                        }, 2, TimeUnit.SECONDS);
+
+
 
                         break;
                 }
@@ -154,18 +183,23 @@ public class ClientHandler implements Runnable{
     }
 
     private void broadcastGameStateToRoom() {
-        List<Integer> pointsList = new ArrayList<>();
-        for (Player player : findRoomById(server.getRooms(),this.roomId).getPlayers()) {
-            pointsList.add(player.getPoints());
-        }
-        for (Player player1 : findRoomById(server.getRooms(),this.roomId).getPlayers()) {
+//        List<Integer> pointsList = new ArrayList<>();
+//        for (Player player : getRoomFromServerById().getPlayers()) {
+//            pointsList.add(player.getPoints());
+//        }
+        for (Player player1 : getRoomFromServerById().getPlayers()) {
             try {
-                GameState gameState = new GameState(findRoomById(server.getRooms(),this.roomId).getRoomId(), player1, pointsList, findRoomById(server.getRooms(),this.roomId).getCardsOnTable(), findRoomById(server.getRooms(),this.roomId).getTurn());
+                GameState gameState = new GameState(getRoomFromServerById().getRoomId(), player1, getRoomFromServerById().getCardsOnTable(), getRoomFromServerById().getTurn());
+
                 sendMessage("GAME_STATE", gameState, server.getClientOutputStreams().get(player1));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private Room getRoomFromServerById() {
+        return findRoomById(server.getRooms(), this.roomId);
     }
 
     private static void sendMessage(String action, Object data, ObjectOutputStream outputStr) throws IOException {
