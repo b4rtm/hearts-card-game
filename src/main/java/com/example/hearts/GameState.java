@@ -11,19 +11,16 @@ public class GameState implements Serializable {
     private Player player;
     private List<Integer> points;
     private Map<Integer, Card> cardsOnTable = new HashMap<>();
+    private int turn;
 
-    public GameState(int roomId, Player player, List<Integer> points, Map<Integer, Card> cardsOnTable) {
+    public GameState(int roomId, Player player, List<Integer> points, Map<Integer, Card> cardsOnTable, int turn) {
         this.roomId = roomId;
         this.player = player;
         this.points = points;
         this.cardsOnTable = cardsOnTable;
+        this.turn = turn;
     }
 
-    public GameState(int roomId, Player player, List<Integer> points) {
-        this.roomId = roomId;
-        this.player = player;
-        this.points = points;
-    }
 
     public int getRoomId() {
         return roomId;
@@ -55,5 +52,13 @@ public class GameState implements Serializable {
 
     public void setCardsOnTable(Map<Integer, Card> cardsOnTable) {
         this.cardsOnTable = cardsOnTable;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
     }
 }

@@ -43,7 +43,7 @@ public class HelloController {
     private Button newRoomButton;
 
 
-    public void init() {
+    public void initialize() {
         this.serverCommunication = new ServerCommunicationHandler();
         serverCommunication.connectToServer("localhost", 9997);
 
@@ -121,16 +121,24 @@ public class HelloController {
                 pointsLabel.setText(String.valueOf(points));
                 counter++;
             }
+        });
 
             for (int cardCounter=1; cardCounter<=gameState.getPlayer().getCards().size(); cardCounter++){
                 ImageView card = (ImageView) root.lookup("#card" + cardCounter);
-                Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + gameState.getPlayer().getCards().get(cardCounter-1).getImagePath());
+                int finalCardCounter1 = cardCounter;
+                Platform.runLater(() -> {
+                Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + gameState.getPlayer().getCards().get(finalCardCounter1 -1).getImagePath());
                 card.setImage(cardImage);
-
+                });
                 int finalCardCounter = cardCounter;
-                card.setOnMouseClicked(event -> serverCommunication.sendToServer("MOVE", new Move(gameState.getPlayer().getCards().get(finalCardCounter -1), gameState.getPlayer())));
-            }
+//                if(gameState.getTurn() == gameState.getPlayer().getId())
+                    card.setOnMouseClicked(event -> {
+                        System.out.println("XD");
+                        serverCommunication.sendToServer("MOVE", new Move(gameState.getPlayer().getCards().get(finalCardCounter -1), gameState.getPlayer()));
+                    });
 
+            }
+        Platform.runLater(() -> {
             for (int blankCardCounter = gameState.getPlayer().getCards().size(); blankCardCounter<=13;blankCardCounter++){
                 ImageView card = (ImageView) root.lookup("#card" + blankCardCounter);
                 card.setImage(null);

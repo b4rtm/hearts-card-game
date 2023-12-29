@@ -12,6 +12,7 @@ public class Room implements Serializable  {
     private int roomId;
     private List<Player> players = new ArrayList<>();
     private Map<Integer, Card> cardsOnTable = new HashMap<>();
+    private int turn;
 
     public Room(int id) {
         this.roomId = id;
@@ -46,8 +47,33 @@ public class Room implements Serializable  {
         this.cardsOnTable = cardsOnTable;
     }
 
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
     @Override
     public String toString() {
         return "#" + roomId + "   " +  (players != null ? players.size() : 0) + "/4";
+    }
+
+    public void setNextTurn() {
+        int index = players.indexOf(findPlayerById(turn));
+        if(index == 3)
+            turn = players.get(0).getId();
+        else
+            turn = players.get(index+1).getId();
+    }
+
+    public Player findPlayerById(int targetId) {
+        for (Player player1 : players) {
+            if (player1.getId() == targetId) {
+                return player1;
+            }
+        }
+        return null;
     }
 }

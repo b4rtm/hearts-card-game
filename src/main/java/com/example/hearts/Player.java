@@ -10,7 +10,6 @@ public class Player implements Serializable {
     private String name;
     private List<Card> cards = new ArrayList<>();
     private int points;
-    private boolean isYourTurn;
 
     public Player(int id) {
         this.id = id;
@@ -46,14 +45,6 @@ public class Player implements Serializable {
 
     public void setPoints(int points) {
         this.points = points;
-    }
-
-    public boolean isYourTurn() {
-        return isYourTurn;
-    }
-
-    public void setYourTurn(boolean yourTurn) {
-        isYourTurn = yourTurn;
     }
 
     @Override

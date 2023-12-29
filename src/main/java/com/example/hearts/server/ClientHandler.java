@@ -19,8 +19,8 @@ public class ClientHandler implements Runnable{
     private final ObjectInputStream inputStream;
     private final Server server;
 
-    private Room room;
-
+//    private Room room;
+    private int roomId;
 //    private GameState gameState;
 
     public ClientHandler(Socket socket, int id, Server server, ObjectOutputStream outputStream) {
@@ -95,6 +95,7 @@ public class ClientHandler implements Runnable{
                         Room room = findRoomById(server.getRooms(), roomId);
                         room.getPlayers().add(player);
                         broadcastToAll("ROOMS", server.getRooms());
+                        this.roomId = roomId;
 
                         if(room.getPlayers().size() == 4){
                             List<Card> deck = DeckInitializer.initializeDeck();
@@ -103,7 +104,8 @@ public class ClientHandler implements Runnable{
                             for (Player player1: room.getPlayers()) {
                                 room.getCardsOnTable().put(player1.getId(), null);
                             }
-                            this.room = room;
+                            server.getRooms().set(server.getRooms().indexOf(findRoomById(server.getRooms(),this.roomId)),room);
+                            findRoomById(server.getRooms(),this.roomId).setTurn(room.getPlayers().get(0).getId());
                             broadcastGameStateToRoom();
                         }
                         break;
@@ -111,8 +113,9 @@ public class ClientHandler implements Runnable{
                         Move move = (Move) inputStream.readObject();
 //                        if(!HeartRules.isMoveValid(move, findRoomById(server.getRooms(), gameState.getRoomId()), gameState) )//TODO
 //                            break;
-                        findPlayerById(move.getPlayer().getId()).getCards().remove(move.getCard());
-                        this.room.getCardsOnTable().replace(move.getPlayer().getId(), move.getCard());
+                        findRoomById(server.getRooms(),this.roomId).findPlayerById(move.getPlayer().getId()).getCards().remove(move.getCard());
+                        findRoomById(server.getRooms(),this.roomId).getCardsOnTable().replace(move.getPlayer().getId(), move.getCard());
+                        findRoomById(server.getRooms(),this.roomId).setNextTurn();
 
                         broadcastGameStateToRoom();
 
@@ -135,14 +138,6 @@ public class ClientHandler implements Runnable{
         return null;
     }
 
-    public Player findPlayerById(int targetId) {
-        for (Player player1 : room.getPlayers()) {
-            if (player1.getId() == targetId) {
-                return player1;
-            }
-        }
-        return null;
-    }
 
     private int generateRoomId(){
         return server.getRooms().size() + 1;
@@ -160,12 +155,12 @@ public class ClientHandler implements Runnable{
 
     private void broadcastGameStateToRoom() {
         List<Integer> pointsList = new ArrayList<>();
-        for (Player player : room.getPlayers()) {
+        for (Player player : findRoomById(server.getRooms(),this.roomId).getPlayers()) {
             pointsList.add(player.getPoints());
         }
-        for (Player player1 : room.getPlayers()) {
+        for (Player player1 : findRoomById(server.getRooms(),this.roomId).getPlayers()) {
             try {
-                GameState gameState = new GameState(room.getRoomId(), player1, pointsList, room.getCardsOnTable());
+                GameState gameState = new GameState(findRoomById(server.getRooms(),this.roomId).getRoomId(), player1, pointsList, findRoomById(server.getRooms(),this.roomId).getCardsOnTable(), findRoomById(server.getRooms(),this.roomId).getTurn());
                 sendMessage("GAME_STATE", gameState, server.getClientOutputStreams().get(player1));
             } catch (IOException e) {
                 e.printStackTrace();

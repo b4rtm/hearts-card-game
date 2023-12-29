@@ -15,7 +15,7 @@ public class Client extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         HelloController controller = fxmlLoader.getController();
-        controller.init();
+//        controller.init();
         stage.show();
     }
 
