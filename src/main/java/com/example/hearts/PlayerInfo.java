@@ -1,7 +1,10 @@
 package com.example.hearts;
 
 import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class PlayerInfo implements Serializable {
 
@@ -50,5 +53,40 @@ public class PlayerInfo implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public static PlayerInfo findPlayerWithLowestId(int excludedId, Map<PlayerInfo, Card> cardsOnTable) {
+        return cardsOnTable.keySet().stream()
+                .filter(playerInfo -> playerInfo.getId() != excludedId)
+                .min(Comparator.comparingInt(PlayerInfo::getId))
+                .orElse(null);
+    }
+
+    public static PlayerInfo findPlayerWithMiddleId(int excludedId, Map<PlayerInfo, Card> cardsOnTable) {
+        return cardsOnTable.keySet().stream()
+                .filter(playerInfo -> playerInfo.getId() != excludedId)
+                .sorted(Comparator.comparingInt(PlayerInfo::getId))
+                .skip(1) // Zawsze pomijamy drugi element, bo zawsze są cztery elementy
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static PlayerInfo findPlayerWithHighestId(int excludedId, Map<PlayerInfo, Card> cardsOnTable) {
+        return cardsOnTable.keySet().stream()
+                .filter(playerInfo -> playerInfo.getId() != excludedId)
+                .max(Comparator.comparingInt(PlayerInfo::getId))
+                .orElse(null);
+    }
+
+    public static PlayerInfo getPlayerInfo(GameState gameState) {
+        PlayerInfo foundPlayer = null;
+        Set<PlayerInfo> playerInfos = gameState.getCardsOnTable().keySet();
+        for (PlayerInfo playerInfo : playerInfos) {
+            if (playerInfo.getId() == gameState.getPlayer().getId()) {
+                foundPlayer = playerInfo;
+                break;
+            }
+        }
+        return foundPlayer;
     }
 }

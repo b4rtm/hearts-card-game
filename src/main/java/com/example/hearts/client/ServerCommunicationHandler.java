@@ -1,6 +1,5 @@
 package com.example.hearts.client;
 
-import com.example.hearts.Card;
 import com.example.hearts.GameState;
 import com.example.hearts.Player;
 import com.example.hearts.Room;
@@ -9,7 +8,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServerCommunicationHandler {
@@ -38,7 +36,7 @@ public class ServerCommunicationHandler {
         }
     }
 
-    synchronized public void readMessagesFromServer(HelloController controller) {
+    synchronized public void readMessagesFromServer(Controller controller) {
         try {
             while (true) {
                 String action = inputStream.readUTF();
@@ -60,6 +58,7 @@ public class ServerCommunicationHandler {
             e.printStackTrace();
         }
     }
+
 
     public void closeConnection() {
         // Implementacja zamykania połączenia

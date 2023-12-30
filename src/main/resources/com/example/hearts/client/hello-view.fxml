@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="815.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hearts.client.HelloController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="815.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.hearts.client.Controller">
    <children>
       <Label layoutX="311.0" layoutY="100.0" text="KIERKI">
          <font>
@@ -18,7 +18,7 @@
             <Font name="Arial Black" size="25.0" />
          </font>
       </Label>
-      <Button fx:id="joinButton" layoutX="366.0" layoutY="367.0" mnemonicParsing="false" onAction="#addPlayer" text="Dołącz">
+      <Button fx:id="joinButton" layoutX="366.0" layoutY="367.0" mnemonicParsing="false" onAction="#initClient" text="Dołącz">
          <font>
             <Font size="19.0" />
          </font>
