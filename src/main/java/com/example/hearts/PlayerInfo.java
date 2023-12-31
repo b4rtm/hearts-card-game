@@ -1,10 +1,7 @@
 package com.example.hearts;
 
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class PlayerInfo implements Serializable {
 
@@ -88,5 +85,13 @@ public class PlayerInfo implements Serializable {
             }
         }
         return foundPlayer;
+    }
+
+    public static PlayerInfo getPlayerInfoById(Set <PlayerInfo> playerInfoList, int id){
+        for (PlayerInfo playerInfo: playerInfoList){
+            if(playerInfo.id == id)
+                return playerInfo;
+        }
+        return null;
     }
 }

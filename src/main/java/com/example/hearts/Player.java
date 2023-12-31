@@ -51,4 +51,8 @@ public class Player implements Serializable {
     public boolean equals(Object obj) {
         return id == ((Player) obj).id;
     }
+
+    public static Player getPlayerById(List<Player> playerList, int targetId){
+        return playerList.stream().filter(player -> player.getId() == targetId).findFirst().orElse(null);
+    }
 }

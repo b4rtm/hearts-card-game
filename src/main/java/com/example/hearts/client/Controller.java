@@ -3,12 +3,11 @@ package com.example.hearts.client;
 import com.example.hearts.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -55,20 +54,13 @@ public class Controller {
 
     public void updateGameView(GameState gameState){
 
-
-//            Pane innerPane = (Pane) root.lookup("#pane1");
-//            int counter=1;
-//            for (Integer points : gameState.getPoints()){
-//                Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
-//                pointsLabel.setText(String.valueOf(points));
-//                counter++;
-//            }
+        view.displayPoints(gameState.getPointsList());
 
         for (int cardCounter=1; cardCounter<=gameState.getPlayer().getCards().size(); cardCounter++){
             view.setCardInDeck(cardCounter, gameState.getPlayer().getCards().get(cardCounter -1),gameState.getPlayer() , gameState.getTurn() == gameState.getPlayer().getId());
         }
 
-        for (int blankCardCounter = gameState.getPlayer().getCards().size(); blankCardCounter<=13;blankCardCounter++){
+        for (int blankCardCounter = gameState.getPlayer().getCards().size()+1; blankCardCounter<=13;blankCardCounter++){
             view.removeCardFromDeck(blankCardCounter);
         }
 
@@ -76,7 +68,7 @@ public class Controller {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.schedule(() -> {
-            if(!gameState.getCardsOnTable().containsValue(null)){
+            if(!gameState.getCardsOnTable().containsValue(null) && (gameState.getPlayer().getId() == gameState.getTurn())){
                 serverCommunication.sendToServer("CLEAR_TABLE", gameState.getRoomId());
             }
         }, 2, TimeUnit.SECONDS);

@@ -13,6 +13,8 @@ public class Room implements Serializable  {
     private List<Player> players = new ArrayList<>();
     private Map<PlayerInfo, Card> cardsOnTable = new HashMap<>();
     private int turn;
+    private int startTurn;
+    private int dealNumber;
 
     public Room(int id) {
         this.roomId = id;
@@ -53,6 +55,22 @@ public class Room implements Serializable  {
 
     public void setTurn(int turn) {
         this.turn = turn;
+    }
+
+    public int getStartTurn() {
+        return startTurn;
+    }
+
+    public void setStartTurn(int startTurn) {
+        this.startTurn = startTurn;
+    }
+
+    public int getDealNumber() {
+        return dealNumber;
+    }
+
+    public void setDealNumber(int dealNumber) {
+        this.dealNumber = dealNumber;
     }
 
     @Override

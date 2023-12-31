@@ -159,6 +159,7 @@ public class View {
         Platform.runLater(() -> {
             ImageView card = (ImageView) root.lookup("#card" + number);
             card.setImage(null);
+            card.setOnMouseClicked(null);
         });
     }
 
@@ -169,4 +170,15 @@ public class View {
         });
     }
 
+    public void displayPoints(List<Integer> pointsList){
+        Platform.runLater(() -> {
+            Pane innerPane = (Pane) root.lookup("#pane1");
+            int counter=1;
+            for (Integer points : pointsList){
+                Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
+                pointsLabel.setText(String.valueOf(points));
+                counter++;
+            }
+        });
+    }
 }
