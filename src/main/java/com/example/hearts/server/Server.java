@@ -1,6 +1,7 @@
 package com.example.hearts.server;
 
 import com.example.hearts.Player;
+import com.example.hearts.PlayerInfo;
 import com.example.hearts.Room;
 
 import java.io.IOException;
@@ -29,13 +30,38 @@ public class Server {
         return clientOutputStreams;
     }
 
+    private void displayGameInfo(){
+        while (true){
+            System.out.println("Napisz \"info\" aby wyświetlić stan serwera");
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+            if(input.equals("info")){
+                System.out.println("Pokoje:");
+                for (Room room : rooms){
+                    System.out.println("Pokój #" + room.getRoomId());
+                    for (Player player : room.getPlayers()){
+                        System.out.println("    " + player.getName() + " " + player.getPoints() + " PKT");
+                    }
+                }
+            }
+
+        }
+    }
+
     public static void main(String[] args) {
+        
+        
 
         Server server= new Server();
 
         int clientCounter = 0;
         try(ServerSocket serverSocket = new ServerSocket(PORT)){
             System.out.println("serwer zaczął działać");
+            Thread displayGameInfo = new Thread(() -> {
+                server.displayGameInfo();
+            });
+            displayGameInfo.start();
+            
             while (!serverSocket.isClosed()){
                 try{
                     Socket socket = serverSocket.accept();
