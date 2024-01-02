@@ -16,21 +16,18 @@ public class HeartsRules {
         Card firstCardOnTable = getStartCard(room);
 
         if(isSameColor(firstCardOnTable, move.getCard())){
-            System.out.println("1");
             return true;
         }
         else if(hasCardInColor(move.getPlayer(),firstCardOnTable.getSuit())){
-            System.out.println("2");
             return false;
         }
         else{
-            System.out.println("3");
             return true;
         }
 
     }
 
-    public static void setPointsToPlayersAfterTurn(Room room){
+    public static int setPointsToPlayersAfterTurn(Room room){
 
 
         Card startCard = getStartCard(room);
@@ -41,7 +38,12 @@ public class HeartsRules {
             PlayerInfo playerInfo = getPlayerInfoByCard(room.getCardsOnTable(), oldestCard);
             Player player = Player.getPlayerById(room.getPlayers(), playerInfo.getId());
             player.setPoints(player.getPoints() - 20);
-
+            System.out.println("ty" + player.getName() + "  " + player.getId());
+            return player.getId();
+        }
+        else {
+            System.out.println("JAK");
+            return 0;
         }
     }
 

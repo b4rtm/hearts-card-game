@@ -132,19 +132,25 @@ public class ClientHandler implements Runnable{
 
                         getRoomFromServerById().setNextTurn();
 
+                        if(getRoomFromServerById().getPlayers().stream().allMatch(player1 -> player1.getCards().size() == 0))
+                            System.out.println("KONIECCCC ");
+
+                        System.out.println(getRoomFromServerById().getTurn());
                         broadcastGameStateToRoom();
 
                         break;
                     case "CLEAR_TABLE":
                         Integer roomToCleanId = (Integer) inputStream.readObject();
 
-                        HeartsRules.setPointsToPlayersAfterTurn(findRoomById(server.getRooms(), roomToCleanId));
+                        int looser = HeartsRules.setPointsToPlayersAfterTurn(findRoomById(server.getRooms(), roomToCleanId));
+                        System.out.println("looser: " + looser);
                         Room roomToClean = findRoomById(server.getRooms(), roomToCleanId);
 
                         for (Map.Entry<PlayerInfo, Card> entry : roomToClean.getCardsOnTable().entrySet()) {
                             entry.setValue(null);
                         }
-                        getRoomFromServerById().setStartTurn(getRoomFromServerById().getPlayers().get(0).getId());
+                        getRoomFromServerById().setTurn(looser);
+                        getRoomFromServerById().setStartTurn(looser);
                         broadcastGameStateToRoom();
                         break;
                 }
