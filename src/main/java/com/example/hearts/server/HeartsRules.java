@@ -31,20 +31,67 @@ public class HeartsRules {
 
 
         Card startCard = getStartCard(room);
-
+        Player player = getPlayerWhoTakesCards(room, startCard);
         if(room.getDealNumber() == 1){
-            List<Card> cardsInStartColor = getCardsInColor(room.getCardsOnTable().values(), startCard.getSuit());
-            Card oldestCard = getTheOldestCard(cardsInStartColor);
-            PlayerInfo playerInfo = getPlayerInfoByCard(room.getCardsOnTable(), oldestCard);
-            Player player = Player.getPlayerById(room.getPlayers(), playerInfo.getId());
             player.setPoints(player.getPoints() - 20);
-            System.out.println("ty" + player.getName() + "  " + player.getId());
-            return player.getId();
         }
-        else {
-            System.out.println("JAK");
-            return 0;
+        else if(room.getDealNumber() == 2){
+            for (Card card : room.getCardsOnTable().values()){
+                if(card.getSuit() == Suit.HEARTS)
+                    player.setPoints(player.getPoints() - 20);
+            }
         }
+        else if(room.getDealNumber() == 3){
+            for (Card card : room.getCardsOnTable().values()){
+                if(card.getRank() == Rank.QUEEN)
+                    player.setPoints(player.getPoints() - 60);
+            }
+        }
+        else if(room.getDealNumber() == 4){
+            for (Card card : room.getCardsOnTable().values()){
+                if(card.getRank() == Rank.KING || card.getRank() == Rank.JACK)
+                    player.setPoints(player.getPoints() - 30);
+            }
+        }
+        else if(room.getDealNumber() == 5){
+            for (Card card : room.getCardsOnTable().values()){
+                if(card.getRank() == Rank.KING && card.getSuit() == Suit.HEARTS)
+                    player.setPoints(player.getPoints() - 150);
+            }
+        }
+        else if(room.getDealNumber() == 6){
+            int turn = 13 - player.getCards().size();
+            if(turn == 7 || turn == 13)
+                player.setPoints(player.getPoints() - 75);
+
+        }
+        else if(room.getDealNumber() == 7){
+            player.setPoints(player.getPoints() - 20);
+
+            for (Card card : room.getCardsOnTable().values()){
+                if(card.getSuit() == Suit.HEARTS)
+                    player.setPoints(player.getPoints() - 20);
+                if(card.getRank() == Rank.QUEEN)
+                    player.setPoints(player.getPoints() - 60);
+                if(card.getRank() == Rank.KING || card.getRank() == Rank.JACK)
+                    player.setPoints(player.getPoints() - 30);
+                if(card.getRank() == Rank.KING && card.getSuit() == Suit.HEARTS)
+                    player.setPoints(player.getPoints() - 150);
+            }
+
+            int turn = 13 - player.getCards().size();
+            if(turn == 7 || turn == 13)
+                player.setPoints(player.getPoints() - 75);
+        }
+        return player.getId();
+    }
+
+    private static Player getPlayerWhoTakesCards(Room room, Card startCard) {
+        List<Card> cardsInStartColor = getCardsInColor(room.getCardsOnTable().values(), startCard.getSuit());
+        Card oldestCard = getTheOldestCard(cardsInStartColor);
+        PlayerInfo playerInfo = getPlayerInfoByCard(room.getCardsOnTable(), oldestCard);
+        Player player = Player.getPlayerById(room.getPlayers(), playerInfo.getId());
+        return player;
     }
 
     private static List<Card> getCardsInColor(Collection<Card> cardsOnTable, Suit suit) {
