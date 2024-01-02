@@ -3,20 +3,21 @@ package com.example.hearts.client;
 import com.example.hearts.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Controller {
 
     private ServerCommunicationHandler serverCommunication;
     private View view;
     private Player player;
+    private List<ChatMessage> chatHistory = new ArrayList<>();
 
 
     @FXML
@@ -48,6 +49,10 @@ public class Controller {
 
     public void createNewRoom() {
         serverCommunication.sendToServer("CREATE_ROOM", 0);
+    }
+
+    public void sendChatMessage(String message){
+        serverCommunication.sendToServer("CHAT_MESSAGE", new ChatMessage(player.getId(), player.getName(), message));
     }
 
 
@@ -111,6 +116,14 @@ public class Controller {
                 break;
             }
         }
+    }
+
+    public void updateChat(ChatMessage message){
+        chatHistory.add(message);
+        List<String> formattedMessages = chatHistory.stream()
+                .map(chatMessage -> chatMessage.getPlayerName() + ": " + chatMessage.getMessage())
+                .collect(Collectors.toList());
+         view.addMessageToListView(formattedMessages);
     }
     
     public void joinRoom(Room selectedRoom){

@@ -1,5 +1,6 @@
 package com.example.hearts.client;
 
+import com.example.hearts.ChatMessage;
 import com.example.hearts.GameState;
 import com.example.hearts.Player;
 import com.example.hearts.Room;
@@ -47,6 +48,10 @@ public class ServerCommunicationHandler {
                     case "ROOMS":
                         List<Room> newRoom = (List<Room>) inputStream.readObject();
                         controller.updateRoomsList(newRoom);
+                        break;
+                    case "CHAT_MESSAGE":
+                        ChatMessage message = (ChatMessage) inputStream.readObject();
+                        controller.updateChat(message);
                         break;
                     case "GAME_STATE":
                         GameState gameState = (GameState) inputStream.readObject();

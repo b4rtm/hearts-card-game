@@ -92,6 +92,10 @@ public class ClientHandler implements Runnable{
                         server.getRooms().add(newRoom);
                         broadcastToAll("ROOMS", server.getRooms());
                         break;
+                    case "CHAT_MESSAGE":
+                        ChatMessage message = (ChatMessage) inputStream.readObject();
+                        broadcastMessageToRoom(message);
+                        break;
                     case "JOIN_ROOM":
                         Integer roomId = (Integer) inputStream.readObject();
                         Room room = findRoomById(server.getRooms(), roomId);
@@ -207,6 +211,18 @@ public class ClientHandler implements Runnable{
                 GameState gameState = new GameState(getRoomFromServerById().getRoomId(), player1, getRoomFromServerById().getCardsOnTable(), getRoomFromServerById().getTurn(), pointsList);
 
                 sendMessage("GAME_STATE", gameState, server.getClientOutputStreams().get(player1));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void broadcastMessageToRoom(ChatMessage message) {
+
+        for (Player player1 : getRoomFromServerById().getPlayers()) {
+            try {
+
+                sendMessage("CHAT_MESSAGE", message, server.getClientOutputStreams().get(player1));
             } catch (IOException e) {
                 e.printStackTrace();
             }

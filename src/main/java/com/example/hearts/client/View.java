@@ -28,6 +28,7 @@ public class View {
 
     private ListView<Room> roomsList;
 
+
     private Button newRoomButton;
 
     private Controller controller;
@@ -78,6 +79,15 @@ public class View {
             Scene scene = new Scene(root);
             Stage stage = (Stage) newRoomButton.getScene().getWindow();
             stage.setScene(scene);
+
+            Button sendButton = (Button) root.lookup("#chatButton");
+            TextField messageTextField = (TextField) root.lookup("#chatText");
+            sendButton.setOnAction(event -> {
+                controller.sendChatMessage(messageTextField.getText());
+                messageTextField.setText("");
+            });
+
+
             stage.show();
         });
     }
@@ -179,6 +189,15 @@ public class View {
                 pointsLabel.setText(String.valueOf(points));
                 counter++;
             }
+        });
+    }
+
+    public void addMessageToListView(List<String> chatHistory){
+        Platform.runLater(() -> {
+            ListView<String> chatListView = (ListView<String>) root.lookup("#chatList");
+            chatListView.getItems().clear();
+            chatListView.getItems().addAll(chatHistory);
+
         });
     }
 }

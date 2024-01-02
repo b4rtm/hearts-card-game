@@ -1,7 +1,6 @@
 package com.example.hearts.server;
 
 import com.example.hearts.Player;
-import com.example.hearts.PlayerInfo;
 import com.example.hearts.Room;
 
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class Server {
                 for (Room room : rooms){
                     System.out.println("Pokój #" + room.getRoomId());
                     for (Player player : room.getPlayers()){
-                        System.out.println("    " + player.getName() + " " + player.getPoints() + " PKT");
+                        System.out.println("    GRACZ " + player.getName() + " " + player.getPoints() + " PKT");
                     }
                 }
             }
@@ -49,9 +48,6 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        
-        
-
         Server server= new Server();
 
         int clientCounter = 0;
@@ -61,7 +57,7 @@ public class Server {
                 server.displayGameInfo();
             });
             displayGameInfo.start();
-            
+
             while (!serverSocket.isClosed()){
                 try{
                     Socket socket = serverSocket.accept();
