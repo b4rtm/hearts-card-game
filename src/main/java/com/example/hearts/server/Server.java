@@ -1,5 +1,7 @@
 package com.example.hearts.server;
 
+import com.example.hearts.Card;
+import com.example.hearts.GameState;
 import com.example.hearts.Player;
 import com.example.hearts.Room;
 
@@ -8,6 +10,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Server {
 
@@ -29,11 +33,24 @@ public class Server {
         return clientOutputStreams;
     }
 
-    private void displayGameInfo(){
+    private void listenToRequests(){
         while (true){
-            System.out.println("Napisz \"info\" aby wyświetlić stan serwera");
+            System.out.println("Napisz \"info\" aby wyświetlić stan serwera lub \"nastepna {numer pokoju}\" aby przejść do kolejnego rozdania");
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
+            Pattern pattern = Pattern.compile("nastepna (\\d+)");
+            Matcher matcher = pattern.matcher(input);
+            if (matcher.matches()) {
+                String stringNumber = matcher.group(1);
+                int roomId = Integer.parseInt(stringNumber);
+                Room room = Room.getRoomById(rooms,roomId);
+                if(room == null)
+                    continue;
+                List<Card> deck = DeckInitializer.initializeDeck();
+                DeckInitializer.dealCardsToPlayers(deck, room.getPlayers());
+                room.setDealNumber(room.getDealNumber()+1);
+                broadcastGameStateToRoom(room);
+            }
             if(input.equals("info")){
                 System.out.println("Pokoje:");
                 for (Room room : rooms){
@@ -43,7 +60,22 @@ public class Server {
                     }
                 }
             }
+        }
+    }
 
+    private void broadcastGameStateToRoom(Room room) {
+        List<Integer> pointsList = new ArrayList<>();
+        for (Player player : room.getPlayers()) {
+            pointsList.add(player.getPoints());
+        }
+        for (Player player1 : room.getPlayers()) {
+            try {
+                GameState gameState = new GameState(room.getRoomId(), player1, room.getCardsOnTable(), room.getTurn(), pointsList);
+
+                ClientHandler.sendMessage("GAME_STATE", gameState, clientOutputStreams.get(player1));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -54,7 +86,7 @@ public class Server {
         try(ServerSocket serverSocket = new ServerSocket(PORT)){
             System.out.println("serwer zaczął działać");
             Thread displayGameInfo = new Thread(() -> {
-                server.displayGameInfo();
+                server.listenToRequests();
             });
             displayGameInfo.start();
 

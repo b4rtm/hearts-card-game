@@ -94,4 +94,8 @@ public class Room implements Serializable  {
         }
         return null;
     }
+
+    public static Room getRoomById(List<Room> rooms, int targetId){
+        return rooms.stream().filter(room -> room.roomId == targetId).findFirst().orElse(null);
+    }
 }

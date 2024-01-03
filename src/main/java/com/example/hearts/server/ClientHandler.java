@@ -233,7 +233,7 @@ public class ClientHandler implements Runnable{
         return findRoomById(server.getRooms(), this.roomId);
     }
 
-    private static void sendMessage(String action, Object data, ObjectOutputStream outputStr) throws IOException {
+    public static void sendMessage(String action, Object data, ObjectOutputStream outputStr) throws IOException {
         outputStr.reset();
         outputStr.writeUTF(action);
         outputStr.writeObject(data);

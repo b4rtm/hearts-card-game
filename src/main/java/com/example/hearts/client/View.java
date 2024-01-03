@@ -79,16 +79,18 @@ public class View {
             Scene scene = new Scene(root);
             Stage stage = (Stage) newRoomButton.getScene().getWindow();
             stage.setScene(scene);
-
-            Button sendButton = (Button) root.lookup("#chatButton");
-            TextField messageTextField = (TextField) root.lookup("#chatText");
-            sendButton.setOnAction(event -> {
-                controller.sendChatMessage(messageTextField.getText());
-                messageTextField.setText("");
-            });
-
+            initChat();
 
             stage.show();
+        });
+    }
+
+    private void initChat() {
+        Button sendButton = (Button) root.lookup("#chatButton");
+        TextField messageTextField = (TextField) root.lookup("#chatText");
+        sendButton.setOnAction(event -> {
+            controller.sendChatMessage(messageTextField.getText());
+            messageTextField.setText("");
         });
     }
 

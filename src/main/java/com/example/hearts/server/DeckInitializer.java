@@ -44,6 +44,7 @@ public class DeckInitializer {
     }
 
     public static void dealCardsToPlayers(List<Card> deck, List<Player> players) {
+        players.forEach(player -> player.getCards().clear());
         for (int i = 0; i < players.size(); i++) {
             for (int j = i; j < deck.size(); j += players.size()) {
                 players.get(i).getCards().add(deck.get(j));
