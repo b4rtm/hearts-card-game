@@ -52,14 +52,14 @@
       <ListView fx:id="chatList" layoutX="1113.0" layoutY="246.0" prefHeight="175.0" prefWidth="200.0" />
       <TextField fx:id="chatText" layoutX="1113.0" layoutY="428.0" />
       <Button fx:id="chatButton" layoutX="1266.0" layoutY="428.0" mnemonicParsing="false" text="Wyślij" />
-      <Pane layoutX="355.0" layoutY="164.0" prefHeight="200.0" prefWidth="527.0" style="-fx-background-color: white;" visible="false">
+      <Pane fx:id="endPane" layoutX="355.0" layoutY="164.0" prefHeight="200.0" prefWidth="527.0" style="-fx-background-color: white;" visible="false">
          <children>
             <Label layoutX="163.0" layoutY="35.0" text="KONIEC GRY">
                <font>
                   <Font size="36.0" />
                </font>
             </Label>
-            <Button layoutX="225.0" layoutY="126.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="77.0" text="Dalej">
+            <Button fx:id="endButton" layoutX="225.0" layoutY="126.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="77.0" text="Dalej">
                <font>
                   <Font size="18.0" />
                </font>

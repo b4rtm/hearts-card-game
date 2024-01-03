@@ -99,6 +99,7 @@ public class ClientHandler implements Runnable{
                     case "JOIN_ROOM":
                         Integer roomId = (Integer) inputStream.readObject();
                         Room room = findRoomById(server.getRooms(), roomId);
+                        player.setPoints(0);
                         room.getPlayers().add(player);
                         broadcastToAll("ROOMS", server.getRooms());
                         this.roomId = roomId;
@@ -161,6 +162,10 @@ public class ClientHandler implements Runnable{
                             List<Card> deck = DeckInitializer.initializeDeck();
                             DeckInitializer.dealCardsToPlayers(deck, getRoomFromServerById().getPlayers());
                             getRoomFromServerById().setDealNumber(getRoomFromServerById().getDealNumber()+1);
+
+                            if(getRoomFromServerById().getDealNumber() == 8){
+                                getRoomFromServerById().setEndGame(true);
+                            }
                             System.out.println("hahaha");
                         }
 
@@ -208,7 +213,7 @@ public class ClientHandler implements Runnable{
         }
         for (Player player1 : getRoomFromServerById().getPlayers()) {
             try {
-                GameState gameState = new GameState(getRoomFromServerById().getRoomId(), player1, getRoomFromServerById().getCardsOnTable(), getRoomFromServerById().getTurn(), pointsList);
+                GameState gameState = new GameState(getRoomFromServerById().getRoomId(), player1, getRoomFromServerById().getCardsOnTable(), getRoomFromServerById().getTurn(), pointsList, getRoomFromServerById().isEndGame());
 
                 sendMessage("GAME_STATE", gameState, server.getClientOutputStreams().get(player1));
             } catch (IOException e) {

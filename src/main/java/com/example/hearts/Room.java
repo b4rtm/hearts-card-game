@@ -15,6 +15,8 @@ public class Room implements Serializable  {
     private int turn;
     private int startTurn;
     private int dealNumber;
+    private boolean endGame;
+
 
     public Room(int id) {
         this.roomId = id;
@@ -71,6 +73,14 @@ public class Room implements Serializable  {
 
     public void setDealNumber(int dealNumber) {
         this.dealNumber = dealNumber;
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public void setEndGame(boolean endGame) {
+        this.endGame = endGame;
     }
 
     @Override

@@ -59,6 +59,10 @@ public class Controller {
 
     public void updateGameView(GameState gameState){
 
+        if(gameState.isEndGame()){
+            view.displayEndGamePanel();
+        }
+
         view.displayPoints(gameState.getPointsList());
 
         for (int cardCounter=1; cardCounter<=gameState.getPlayer().getCards().size(); cardCounter++){

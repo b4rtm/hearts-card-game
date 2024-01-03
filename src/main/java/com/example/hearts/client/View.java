@@ -27,6 +27,9 @@ public class View {
     private TextField nameField;
 
     private ListView<Room> roomsList;
+    private Pane roomsPane;
+    private Scene roomScene;
+    private Stage stage;
 
 
     private Button newRoomButton;
@@ -40,32 +43,29 @@ public class View {
     public void setRoomView(ActionEvent event){
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("rooms-view.fxml"));
-            Pane nowyWidok;
             try {
-                nowyWidok = loader.load();
+                roomsPane = loader.load();
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
-
-            Scene nowaScena = new Scene(nowyWidok, 815, 475);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(nowaScena);
-
-            roomsList = new ListView<>();
-            roomsList.setLayoutX(308.0);
-            roomsList.setLayoutY(227.0);
-            roomsList.setPrefHeight(200.0);
-            roomsList.setPrefWidth(200.0);
-            nowyWidok.getChildren().add(roomsList);
+            if (roomScene == null)
+                roomScene = new Scene(roomsPane, 815, 475);
+            if(this.stage == null)
+                this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            this.stage.setScene(roomScene);
 
             newRoomButton = new Button("Stwórz nowy pokój");
             newRoomButton.setLayoutX(350.0);
             newRoomButton.setLayoutY(123.0);
             newRoomButton.setMnemonicParsing(false);
             newRoomButton.setOnAction(event1 -> controller.createNewRoom());
-            nowyWidok.getChildren().add(newRoomButton);
+            roomsPane.getChildren().add(newRoomButton);
         });
+    }
+
+    public void setRoomScene(){
+        this.stage.setScene(roomScene);
     }
 
     public void loadGameView() {
@@ -86,11 +86,13 @@ public class View {
     }
 
     private void initChat() {
-        Button sendButton = (Button) root.lookup("#chatButton");
-        TextField messageTextField = (TextField) root.lookup("#chatText");
-        sendButton.setOnAction(event -> {
-            controller.sendChatMessage(messageTextField.getText());
-            messageTextField.setText("");
+        Platform.runLater(() -> {
+            Button sendButton = (Button) root.lookup("#chatButton");
+            TextField messageTextField = (TextField) root.lookup("#chatText");
+            sendButton.setOnAction(event -> {
+                controller.sendChatMessage(messageTextField.getText());
+                messageTextField.setText("");
+            });
         });
     }
 
@@ -123,6 +125,7 @@ public class View {
 
     public void updateRoomListView(List<Room> rooms){
         Platform.runLater(() -> {
+            roomsList = (ListView<Room>) roomsPane.lookup("#roomsList");
             roomsList.getItems().clear();
             roomsList.getItems().addAll(rooms);
             roomsList.setOnMouseClicked(event -> {
@@ -199,6 +202,18 @@ public class View {
             ListView<String> chatListView = (ListView<String>) root.lookup("#chatList");
             chatListView.getItems().clear();
             chatListView.getItems().addAll(chatHistory);
+
+        });
+    }
+
+    public void displayEndGamePanel() {
+        Platform.runLater(() -> {
+            Pane endPane = (Pane) root.lookup("#endPane");
+            endPane.setVisible(true);
+            Button endButton = (Button) endPane.lookup("#endButton");
+            endButton.setOnAction(actionEvent -> {
+                setRoomScene();
+            });
 
         });
     }
