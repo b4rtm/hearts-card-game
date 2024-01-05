@@ -55,4 +55,13 @@ public class Player implements Serializable {
     public static Player getPlayerById(List<Player> playerList, int targetId){
         return playerList.stream().filter(player -> player.getId() == targetId).findFirst().orElse(null);
     }
+
+    public boolean hasCardsOtherThanHearts() {
+        for (Card card : cards) {
+            if (card.getSuit() != Suit.HEARTS) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

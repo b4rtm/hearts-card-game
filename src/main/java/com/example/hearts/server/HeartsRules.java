@@ -10,7 +10,10 @@ public class HeartsRules {
 
     public static boolean isMoveValid(Move move, Room room){
 
-        if(isTableEmpty(move, room)) //todo kier
+        if(isHeartsFirst(move, room))
+            return false;
+
+        if(isTableEmpty(move, room))
             return true;
 
         Card firstCardOnTable = getStartCard(room);
@@ -25,6 +28,10 @@ public class HeartsRules {
             return true;
         }
 
+    }
+
+    private static boolean isHeartsFirst(Move move, Room room) {
+        return isTableEmpty(move, room) && move.getCard().getSuit() == Suit.HEARTS && move.getPlayer().hasCardsOtherThanHearts() && (room.getDealNumber() == 2 || room.getDealNumber() == 5 || room.getDealNumber() == 7);
     }
 
     public static int setPointsToPlayersAfterTurn(Room room){
