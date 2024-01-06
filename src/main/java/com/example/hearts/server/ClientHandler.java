@@ -88,7 +88,7 @@ public class ClientHandler implements Runnable{
                         break;
                     case "CREATE_ROOM":
                         inputStream.readObject();
-                        Room newRoom = new Room(generateRoomId());
+                        Room newRoom = new Room();
                         server.getRooms().add(newRoom);
                         broadcastToAll("ROOMS", server.getRooms());
                         break;
@@ -115,6 +115,7 @@ public class ClientHandler implements Runnable{
                             getRoomFromServerById().setTurn(room.getPlayers().get(0).getId());
                             getRoomFromServerById().setStartTurn(room.getPlayers().get(0).getId());
                             getRoomFromServerById().setDealNumber(1);
+                            getRoomFromServerById().setTurnNumber(1);
                             broadcastGameStateToRoom();
                         }
                         break;
@@ -134,12 +135,9 @@ public class ClientHandler implements Runnable{
                             }
                         }
                         getRoomFromServerById().getCardsOnTable().replace(foundPlayer, move.getCard());
-
                         getRoomFromServerById().setNextTurn();
+                        System.out.println(getRoomFromServerById().getTurnNumber());
 
-
-
-                        System.out.println(getRoomFromServerById().getTurn());
                         broadcastGameStateToRoom();
 
                         break;
@@ -156,17 +154,18 @@ public class ClientHandler implements Runnable{
 
                         getRoomFromServerById().setTurn(looser);
                         getRoomFromServerById().setStartTurn(looser);
+                        getRoomFromServerById().setTurnNumber(getRoomFromServerById().getTurnNumber()+1);
 
 
-                        if(getRoomFromServerById().getPlayers().stream().allMatch(player1 -> player1.getCards().size() == 0)){
+                        if(getRoomFromServerById().getTurnNumber() == 14){
                             List<Card> deck = DeckInitializer.initializeDeck();
                             DeckInitializer.dealCardsToPlayers(deck, getRoomFromServerById().getPlayers());
                             getRoomFromServerById().setDealNumber(getRoomFromServerById().getDealNumber()+1);
+                            getRoomFromServerById().setTurnNumber(1);
 
                             if(getRoomFromServerById().getDealNumber() == 8){
                                 getRoomFromServerById().setEndGame(true);
                             }
-                            System.out.println("hahaha");
                         }
 
 

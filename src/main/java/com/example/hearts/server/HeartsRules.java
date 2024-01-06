@@ -67,8 +67,8 @@ public class HeartsRules {
             }
         }
         else if(room.getDealNumber() == 6){
-            int turn = 13 - player.getCards().size();
-            if(turn == 7 || turn == 13)
+
+            if(room.getTurnNumber() == 7 || room.getTurnNumber() == 13)
                 player.setPoints(player.getPoints() - 75);
 
         }
@@ -94,11 +94,16 @@ public class HeartsRules {
     }
 
     private static Player getPlayerWhoTakesCards(Room room, Card startCard) {
-        List<Card> cardsInStartColor = getCardsInColor(room.getCardsOnTable().values(), startCard.getSuit());
-        Card oldestCard = getTheOldestCard(cardsInStartColor);
+        Card oldestCard = getLeadingCard(room.getCardsOnTable().values(), startCard);
         PlayerInfo playerInfo = getPlayerInfoByCard(room.getCardsOnTable(), oldestCard);
         Player player = Player.getPlayerById(room.getPlayers(), playerInfo.getId());
         return player;
+    }
+
+    public static Card getLeadingCard(Collection<Card> cards, Card startCard) {
+        List<Card> cardsInStartColor = getCardsInColor(cards, startCard.getSuit());
+        Card oldestCard = getTheOldestCard(cardsInStartColor);
+        return oldestCard;
     }
 
     private static List<Card> getCardsInColor(Collection<Card> cardsOnTable, Suit suit) {

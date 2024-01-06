@@ -9,6 +9,10 @@ public class PlayerInfo implements Serializable {
     private String name;
     private int points;
 
+    public PlayerInfo(int id) {
+        this.id = id;
+    }
+
     public PlayerInfo(int id, String name, int points) {
         this.id = id;
         this.name = name;

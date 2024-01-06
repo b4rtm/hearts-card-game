@@ -14,12 +14,12 @@ public class Room implements Serializable  {
     private Map<PlayerInfo, Card> cardsOnTable = new HashMap<>();
     private int turn;
     private int startTurn;
+    private int turnNumber;
     private int dealNumber;
     private boolean endGame;
 
 
-    public Room(int id) {
-        this.roomId = id;
+    public Room() {
     }
 
     public Room(int roomId, List<Player> players) {
@@ -73,6 +73,14 @@ public class Room implements Serializable  {
 
     public void setDealNumber(int dealNumber) {
         this.dealNumber = dealNumber;
+    }
+
+    public int getTurnNumber() {
+        return turnNumber;
+    }
+
+    public void setTurnNumber(int turnNumber) {
+        this.turnNumber = turnNumber;
     }
 
     public boolean isEndGame() {

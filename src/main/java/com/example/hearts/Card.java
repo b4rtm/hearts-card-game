@@ -9,6 +9,10 @@ public class Card implements Serializable {
     private Suit suit;
     private String imagePath;
 
+    public Card(Rank rank, Suit suit) {
+        this.rank = rank;
+        this.suit = suit;
+    }
 
     public Card(Rank rank, Suit suit, String imagePath) {
         this.rank = rank;
