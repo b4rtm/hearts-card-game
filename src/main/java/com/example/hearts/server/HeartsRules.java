@@ -8,23 +8,20 @@ import java.util.stream.Collectors;
 public class HeartsRules {
 
 
-    public static boolean isMoveValid(Move move, Room room){
+    public static boolean isMoveValid(Move move, Room room) {
 
-        if(isHeartsFirst(move, room))
+        if (isHeartsFirst(move, room))
             return false;
-
-        if(isTableEmpty(move, room))
+        if (isTableEmpty(move, room))
             return true;
 
         Card firstCardOnTable = getStartCard(room);
 
-        if(isSameColor(firstCardOnTable, move.getCard())){
+        if (isSameColor(firstCardOnTable, move.getCard())) {
             return true;
-        }
-        else if(hasCardInColor(move.getPlayer(),firstCardOnTable.getSuit())){
+        } else if (hasCardInColor(move.getPlayer(), firstCardOnTable.getSuit())) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
 
@@ -34,76 +31,82 @@ public class HeartsRules {
         return isTableEmpty(move, room) && move.getCard().getSuit() == Suit.HEARTS && move.getPlayer().hasCardsOtherThanHearts() && (room.getDealNumber() == 2 || room.getDealNumber() == 5 || room.getDealNumber() == 7);
     }
 
-    public static int setPointsToPlayersAfterTurn(Room room){
-
-
+    public static int setPointsToPlayersAfterTurn(Room room) {
         Card startCard = getStartCard(room);
         Player player = getPlayerWhoTakesCards(room, startCard);
-        if(room.getDealNumber() == 1){
-            player.setPoints(player.getPoints() - 20);
-        }
-        else if(room.getDealNumber() == 2){
-            for (Card card : room.getCardsOnTable().values()){
-                if(card.getSuit() == Suit.HEARTS)
-                    player.setPoints(player.getPoints() - 20);
-            }
-        }
-        else if(room.getDealNumber() == 3){
-            for (Card card : room.getCardsOnTable().values()){
-                if(card.getRank() == Rank.QUEEN)
-                    player.setPoints(player.getPoints() - 60);
-            }
-        }
-        else if(room.getDealNumber() == 4){
-            for (Card card : room.getCardsOnTable().values()){
-                if(card.getRank() == Rank.KING || card.getRank() == Rank.JACK)
-                    player.setPoints(player.getPoints() - 30);
-            }
-        }
-        else if(room.getDealNumber() == 5){
-            for (Card card : room.getCardsOnTable().values()){
-                if(card.getRank() == Rank.KING && card.getSuit() == Suit.HEARTS)
-                    player.setPoints(player.getPoints() - 150);
-            }
-        }
-        else if(room.getDealNumber() == 6){
-
-            if(room.getTurnNumber() == 7 || room.getTurnNumber() == 13)
-                player.setPoints(player.getPoints() - 75);
-
-        }
-        else if(room.getDealNumber() == 7){
-            player.setPoints(player.getPoints() - 20);
-
-            for (Card card : room.getCardsOnTable().values()){
-                if(card.getSuit() == Suit.HEARTS)
-                    player.setPoints(player.getPoints() - 20);
-                if(card.getRank() == Rank.QUEEN)
-                    player.setPoints(player.getPoints() - 60);
-                if(card.getRank() == Rank.KING || card.getRank() == Rank.JACK)
-                    player.setPoints(player.getPoints() - 30);
-                if(card.getRank() == Rank.KING && card.getSuit() == Suit.HEARTS)
-                    player.setPoints(player.getPoints() - 150);
-            }
-
-            int turn = 13 - player.getCards().size();
-            if(turn == 7 || turn == 13)
-                player.setPoints(player.getPoints() - 75);
+        if (room.getDealNumber() == 1) {
+            dealOneService(player);
+        } else if (room.getDealNumber() == 2) {
+            dealTwoService(room, player);
+        } else if (room.getDealNumber() == 3) {
+            dealThreeService(room, player);
+        } else if (room.getDealNumber() == 4) {
+            dealFourService(room, player);
+        } else if (room.getDealNumber() == 5) {
+            dealFiveService(room, player);
+        } else if (room.getDealNumber() == 6) {
+            dealSixService(room, player);
+        } else if (room.getDealNumber() == 7) {
+            dealSevenService(room, player);
         }
         return player.getId();
+    }
+
+    private static void dealSevenService(Room room, Player player) {
+        dealOneService(player);
+        dealTwoService(room, player);
+        dealThreeService(room, player);
+        dealFourService(room, player);
+        dealFiveService(room, player);
+        dealSixService(room, player);
+    }
+
+    private static void dealSixService(Room room, Player player) {
+        if (room.getTurnNumber() == 7 || room.getTurnNumber() == 13)
+            player.setPoints(player.getPoints() - 75);
+    }
+
+    private static void dealFiveService(Room room, Player player) {
+        for (Card card : room.getCardsOnTable().values()) {
+            if (card.getRank() == Rank.KING && card.getSuit() == Suit.HEARTS)
+                player.setPoints(player.getPoints() - 150);
+        }
+    }
+
+    private static void dealFourService(Room room, Player player) {
+        for (Card card : room.getCardsOnTable().values()) {
+            if (card.getRank() == Rank.KING || card.getRank() == Rank.JACK)
+                player.setPoints(player.getPoints() - 30);
+        }
+    }
+
+    private static void dealThreeService(Room room, Player player) {
+        for (Card card : room.getCardsOnTable().values()) {
+            if (card.getRank() == Rank.QUEEN)
+                player.setPoints(player.getPoints() - 60);
+        }
+    }
+
+    private static void dealTwoService(Room room, Player player) {
+        for (Card card : room.getCardsOnTable().values()) {
+            if (card.getSuit() == Suit.HEARTS)
+                player.setPoints(player.getPoints() - 20);
+        }
+    }
+
+    private static void dealOneService(Player player) {
+        player.setPoints(player.getPoints() - 20);
     }
 
     private static Player getPlayerWhoTakesCards(Room room, Card startCard) {
         Card oldestCard = getLeadingCard(room.getCardsOnTable().values(), startCard);
         PlayerInfo playerInfo = getPlayerInfoByCard(room.getCardsOnTable(), oldestCard);
-        Player player = Player.getPlayerById(room.getPlayers(), playerInfo.getId());
-        return player;
+        return Player.getPlayerById(room.getPlayers(), playerInfo.getId());
     }
 
     public static Card getLeadingCard(Collection<Card> cards, Card startCard) {
         List<Card> cardsInStartColor = getCardsInColor(cards, startCard.getSuit());
-        Card oldestCard = getTheOldestCard(cardsInStartColor);
-        return oldestCard;
+        return getTheOldestCard(cardsInStartColor);
     }
 
     private static List<Card> getCardsInColor(Collection<Card> cardsOnTable, Suit suit) {
@@ -137,7 +140,7 @@ public class HeartsRules {
         return player.getCards().stream().anyMatch(card -> card.getSuit() == color);
     }
 
-    public static boolean isSameColor(Card card1, Card card2){
+    public static boolean isSameColor(Card card1, Card card2) {
         return card1.getSuit() == card2.getSuit();
     }
 

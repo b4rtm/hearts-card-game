@@ -67,7 +67,7 @@ public class PlayerInfo implements Serializable {
         return cardsOnTable.keySet().stream()
                 .filter(playerInfo -> playerInfo.getId() != excludedId)
                 .sorted(Comparator.comparingInt(PlayerInfo::getId))
-                .skip(1) // Zawsze pomijamy drugi element, bo zawsze są cztery elementy
+                .skip(1)
                 .findFirst()
                 .orElse(null);
     }
@@ -91,9 +91,9 @@ public class PlayerInfo implements Serializable {
         return foundPlayer;
     }
 
-    public static PlayerInfo getPlayerInfoById(Set <PlayerInfo> playerInfoList, int id){
-        for (PlayerInfo playerInfo: playerInfoList){
-            if(playerInfo.id == id)
+    public static PlayerInfo getPlayerInfoById(Set<PlayerInfo> playerInfoList, int id) {
+        for (PlayerInfo playerInfo : playerInfoList) {
+            if (playerInfo.id == id)
                 return playerInfo;
         }
         return null;

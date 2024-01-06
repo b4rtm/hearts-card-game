@@ -6,7 +6,6 @@ public class Move implements Serializable {
 
     private Card card;
     private Player player;
-//    private Room room;
 
     public Move(Card card, Player player) {
         this.card = card;

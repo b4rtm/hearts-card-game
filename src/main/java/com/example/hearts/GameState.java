@@ -16,8 +16,6 @@ public class GameState implements Serializable {
     private List<Integer> pointsList;
     private boolean endGame;
 
-
-
     public GameState(int roomId, Player player, Map<PlayerInfo, Card> cardsOnTable, int turn, List<Integer> pointsList, boolean endGame, int dealNumber) {
         this.roomId = roomId;
         this.player = player;

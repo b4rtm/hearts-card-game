@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
@@ -40,34 +39,13 @@
       <ImageView fx:id="card11" fitHeight="145.0" fitWidth="100.0" layoutX="1024.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="card12" fitHeight="145.0" fitWidth="100.0" layoutX="1125.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="card13" fitHeight="145.0" fitWidth="100.0" layoutX="1225.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="yourCard" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="374.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@cards/2_of_clubs.png" />
-         </image></ImageView>
-      <ImageView fx:id="leftCard" fitHeight="145.0" fitWidth="100.0" layoutX="400.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@cards/2_of_clubs.png" />
-         </image></ImageView>
-      <ImageView fx:id="rightCard" fitHeight="145.0" fitWidth="100.0" layoutX="700.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@cards/2_of_clubs.png" />
-         </image></ImageView>
-      <ImageView fx:id="topCard" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@cards/2_of_clubs.png" />
-         </image></ImageView>
-      <ImageView fx:id="p1" fitHeight="145.0" fitWidth="100.0" layoutX="159.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@cards/2_of_clubs.png" />
-         </image></ImageView>
-      <ImageView fx:id="p2" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@cards/2_of_clubs.png" />
-         </image></ImageView>
-      <ImageView fx:id="p3" fitHeight="145.0" fitWidth="100.0" layoutX="950.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@cards/2_of_clubs.png" />
-         </image></ImageView>
+      <ImageView fx:id="yourCard" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="374.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="leftCard" fitHeight="145.0" fitWidth="100.0" layoutX="400.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="rightCard" fitHeight="145.0" fitWidth="100.0" layoutX="700.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="topCard" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="p1" fitHeight="145.0" fitWidth="100.0" layoutX="159.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="p2" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="p3" fitHeight="145.0" fitWidth="100.0" layoutX="950.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true" />
       <Label fx:id="l2" layoutX="550.0" layoutY="21.0" prefHeight="20.0" prefWidth="100.0" />
       <Label fx:id="l1" layoutX="159.0" layoutY="250.0" prefHeight="20.0" prefWidth="100.0" />
       <Label fx:id="l3" layoutX="950.0" layoutY="250.0" prefHeight="20.0" prefWidth="100.0" />

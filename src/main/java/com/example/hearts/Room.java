@@ -1,15 +1,12 @@
 package com.example.hearts;
 
-import com.example.hearts.server.ClientHandler;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Room implements Serializable  {
-
+public class Room implements Serializable {
 
     private int roomId;
     private List<Player> players = new ArrayList<>();
@@ -96,15 +93,15 @@ public class Room implements Serializable  {
 
     @Override
     public String toString() {
-        return "#" + roomId + "   " +  (players != null ? players.size() : 0) + "/4";
+        return "#" + roomId + "   " + (players != null ? players.size() : 0) + "/4";
     }
 
     public void setNextTurn() {
         int index = players.indexOf(findPlayerById(turn));
-        if(index == 3)
+        if (index == 3)
             turn = players.get(0).getId();
         else
-            turn = players.get(index+1).getId();
+            turn = players.get(index + 1).getId();
     }
 
     public Player findPlayerById(int targetId) {
@@ -116,7 +113,7 @@ public class Room implements Serializable  {
         return null;
     }
 
-    public static Room getRoomById(List<Room> rooms, int targetId){
+    public static Room getRoomById(List<Room> rooms, int targetId) {
         return rooms.stream().filter(room -> room.roomId == targetId).findFirst().orElse(null);
     }
 }

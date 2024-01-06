@@ -1,7 +1,5 @@
 package com.example.hearts.server;
 
-import com.example.hearts.Card;
-import com.example.hearts.GameState;
 import com.example.hearts.Player;
 import com.example.hearts.Room;
 
@@ -18,7 +16,7 @@ public class Server {
     public static final int PORT = 9997;
     private final Map<Player, ObjectOutputStream> clientOutputStreams;
     private List<Room> rooms;
-
+    private List<ClientHandler> clientHandlers = new ArrayList<>();
 
     public Server() {
         clientOutputStreams = Collections.synchronizedMap(new HashMap<>());
@@ -29,89 +27,85 @@ public class Server {
         return rooms;
     }
 
-    public Map<Player,ObjectOutputStream> getClientOutputStreams() {
+    public Map<Player, ObjectOutputStream> getClientOutputStreams() {
         return clientOutputStreams;
     }
 
-    private void listenToRequests(){
-        while (true){
+    private void listenToRequests() {
+        while (true) {
             System.out.println("Napisz \"info\" aby wyświetlić stan serwera lub \"nastepna {numer pokoju}\" aby przejść do kolejnego rozdania");
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
-            Pattern pattern = Pattern.compile("nastepna (\\d+)");
-            Matcher matcher = pattern.matcher(input);
+            Matcher matcher = createPattern(input);
             if (matcher.matches()) {
-                String stringNumber = matcher.group(1);
-                int roomId = Integer.parseInt(stringNumber);
-                Room room = Room.getRoomById(rooms,roomId);
-                if(room == null)
+                Room room = getRoomFromPattern(matcher);
+                if (room == null)
                     continue;
-                List<Card> deck = DeckInitializer.initializeDeck();
-                DeckInitializer.dealCardsToPlayers(deck, room.getPlayers());
-                room.setDealNumber(room.getDealNumber()+1);
-                room.setTurnNumber(1);
-                broadcastGameStateToRoom(room);
+
+                ClientHandler roomClientHandler = clientHandlers.stream().filter(clientHandler -> clientHandler.getRoomId() == room.getRoomId()).findFirst().orElse(null);
+                roomClientHandler.goToNextDeal();
+                roomClientHandler.broadcastGameStateToRoom();
             }
-            if(input.equals("info")){
-                System.out.println("Pokoje:");
-                for (Room room : rooms){
-                    System.out.println("Pokój #" + room.getRoomId());
-                    for (Player player : room.getPlayers()){
-                        System.out.println("    GRACZ " + player.getName() + " " + player.getPoints() + " PKT");
-                    }
-                }
+            if (input.equals("info")) {
+                displayServerInfo();
             }
         }
     }
 
-    private void broadcastGameStateToRoom(Room room) {
-        List<Integer> pointsList = new ArrayList<>();
-        for (Player player : room.getPlayers()) {
-            pointsList.add(player.getPoints());
-        }
-        for (Player player1 : room.getPlayers()) {
-            try {
-                GameState gameState = new GameState(room.getRoomId(), player1, room.getCardsOnTable(), room.getTurn(), pointsList, room.isEndGame(), room.getDealNumber());
-
-                ClientHandler.sendMessage("GAME_STATE", gameState, clientOutputStreams.get(player1));
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void displayServerInfo() {
+        System.out.println("Pokoje:");
+        for (Room room : rooms) {
+            System.out.println("Pokój #" + room.getRoomId());
+            for (Player player : room.getPlayers()) {
+                System.out.println("    GRACZ " + player.getName() + " " + player.getPoints() + " PKT");
             }
         }
+    }
+
+    private Room getRoomFromPattern(Matcher matcher) {
+        String stringNumber = matcher.group(1);
+        int roomId = Integer.parseInt(stringNumber);
+        Room room = Room.getRoomById(rooms, roomId);
+        return room;
+    }
+
+    private static Matcher createPattern(String input) {
+        Pattern pattern = Pattern.compile("nastepna (\\d+)");
+        Matcher matcher = pattern.matcher(input);
+        return matcher;
     }
 
     public static void main(String[] args) {
-        Server server= new Server();
+        Server server = new Server();
 
         int clientCounter = 0;
-        try(ServerSocket serverSocket = new ServerSocket(PORT)){
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("serwer zaczął działać");
-            Thread displayGameInfo = new Thread(() -> {
-                server.listenToRequests();
-            });
+            Thread displayGameInfo = new Thread(() -> server.listenToRequests());
             displayGameInfo.start();
 
-            while (!serverSocket.isClosed()){
-                try{
-                    Socket socket = serverSocket.accept();
-                    System.out.println("zaakceptowano klienta o id " + clientCounter);
-
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-
-
-                    ClientHandler clientHandler = new ClientHandler(socket, clientCounter, server, out);
-                    clientCounter++;
-
-                    Thread thread = new Thread(clientHandler);
-                    thread.start();
-                }
-                catch (IOException e){
-                    System.out.println("nie udało się zaakceptować klienta");
-                }
-            }
-        }
-        catch (IOException e){
+            listenToNewConnections(server, clientCounter, serverSocket);
+        } catch (IOException e) {
             System.out.println("nie udało się stworzyć socketa");
+        }
+    }
+
+    private static void listenToNewConnections(Server server, int clientCounter, ServerSocket serverSocket) {
+        while (!serverSocket.isClosed()) {
+            try {
+                Socket socket = serverSocket.accept();
+                System.out.println("zaakceptowano klienta o id " + clientCounter);
+
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ClientHandler clientHandler = new ClientHandler(socket, clientCounter, server, out);
+                server.clientHandlers.add(clientHandler);
+                clientCounter++;
+
+                Thread thread = new Thread(clientHandler);
+                thread.start();
+            } catch (IOException e) {
+                System.out.println("nie udało się zaakceptować klienta");
+            }
         }
     }
 }

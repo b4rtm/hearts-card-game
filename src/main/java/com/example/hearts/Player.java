@@ -52,7 +52,7 @@ public class Player implements Serializable {
         return id == ((Player) obj).id;
     }
 
-    public static Player getPlayerById(List<Player> playerList, int targetId){
+    public static Player getPlayerById(List<Player> playerList, int targetId) {
         return playerList.stream().filter(player -> player.getId() == targetId).findFirst().orElse(null);
     }
 

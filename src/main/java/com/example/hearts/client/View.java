@@ -3,7 +3,6 @@ package com.example.hearts.client;
 import com.example.hearts.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -21,26 +20,20 @@ import java.util.List;
 
 public class View {
 
+    public static final String ABSOLUTE_CARD_IMAGE_PATH = "file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\";
     private Pane root;
-
-    @FXML
-    private TextField nameField;
-
     private ListView<Room> roomsList;
     private Pane roomsPane;
     private Scene roomScene;
     private Stage stage;
-
-
     private Button newRoomButton;
-
     private Controller controller;
 
     public View(Controller controller) {
         this.controller = controller;
     }
 
-    public void setRoomView(ActionEvent event){
+    public void loadRoomView(ActionEvent event) {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("rooms-view.fxml"));
             try {
@@ -51,9 +44,14 @@ public class View {
             }
             if (roomScene == null)
                 roomScene = new Scene(roomsPane, 815, 475);
-            if(this.stage == null)
+            if (this.stage == null)
                 this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             this.stage.setScene(roomScene);
+
+            this.stage.setOnCloseRequest(event1 -> {
+                controller.onClose();
+                Platform.exit();
+            });
 
             newRoomButton = new Button("Stwórz nowy pokój");
             newRoomButton.setLayoutX(350.0);
@@ -64,7 +62,7 @@ public class View {
         });
     }
 
-    public void setRoomScene(){
+    public void setRoomScene() {
         this.stage.setScene(roomScene);
     }
 
@@ -77,9 +75,14 @@ public class View {
                 throw new RuntimeException(e);
             }
             Scene scene = new Scene(root);
-            Stage stage = (Stage) newRoomButton.getScene().getWindow();
+            this.stage = (Stage) newRoomButton.getScene().getWindow();
             stage.setScene(scene);
             initChat();
+
+            for (int i = 1; i <= 3; i++) {
+                ImageView imageView = (ImageView) root.lookup("#p" + i);
+                imageView.setImage(new Image(ABSOLUTE_CARD_IMAGE_PATH + "reverse_card.jpg"));
+            }
 
             stage.show();
         });
@@ -99,23 +102,17 @@ public class View {
 
     public void displayGameView(Room room) {
         Platform.runLater(() -> {
-
-            for (int i=1;i<=3;i++){
-                ImageView imageView = (ImageView) root.lookup("#p" + i);
-                imageView.setImage(new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\reverse_card.jpg"));
-            }
-
-            if(room.getPlayers().size() < 4) {
+            if (room.getPlayers().size() < 4) {
                 for (int cardCounter = 1; cardCounter <= 13; cardCounter++) {
                     ImageView card = (ImageView) root.lookup("#card" + cardCounter);
-                    Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\reverse_card.jpg");
+                    Image cardImage = new Image(ABSOLUTE_CARD_IMAGE_PATH + "reverse_card.jpg");
                     card.setImage(cardImage);
                 }
             }
 
             Pane innerPane = (Pane) root.lookup("#pane1");
-            int counter=1;
-            for (Player player : room.getPlayers()){
+            int counter = 1;
+            for (Player player : room.getPlayers()) {
                 Label nameLabel = (Label) innerPane.lookup("#name" + counter);
                 nameLabel.setText(player.getName());
                 counter++;
@@ -123,7 +120,7 @@ public class View {
         });
     }
 
-    public void updateRoomListView(List<Room> rooms){
+    public void updateRoomListView(List<Room> rooms) {
         Platform.runLater(() -> {
             roomsList = (ListView<Room>) roomsPane.lookup("#roomsList");
             roomsList.getItems().clear();
@@ -140,37 +137,32 @@ public class View {
 
     public void displayCardOnTable(Card card, String elementId) {
         Platform.runLater(() -> {
-            if(card != null) {
+            if (card != null) {
                 ImageView cardImg = (ImageView) root.lookup(elementId);
-                Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + card.getImagePath());
+                Image cardImage = new Image(ABSOLUTE_CARD_IMAGE_PATH + card.getImagePath());
                 cardImg.setImage(cardImage);
-            }
-            else {
+            } else {
                 ImageView cardImg = (ImageView) root.lookup(elementId);
                 cardImg.setImage(null);
             }
         });
     }
 
-    public void setCardInDeck(int cardCounter, Card card, Player player, boolean setOnClick){
+    public void setCardInDeck(int cardCounter, Card card, Player player, boolean setOnClick) {
         Platform.runLater(() -> {
             ImageView cardImg = (ImageView) root.lookup("#card" + cardCounter);
-            int finalCardCounter1 = cardCounter;
-            Image cardImage = new Image("file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\" + card.getImagePath());
+            Image cardImage = new Image(ABSOLUTE_CARD_IMAGE_PATH + card.getImagePath());
             cardImg.setImage(cardImage);
 
-            int finalCardCounter = cardCounter;
-            if(setOnClick)
-                cardImg.setOnMouseClicked(event -> {
-                    controller.makeMove(card, player);
-                });
-            else{
+            if (setOnClick)
+                cardImg.setOnMouseClicked(event -> controller.makeMove(card, player));
+            else {
                 cardImg.setOnMouseClicked(null);
             }
         });
     }
 
-    public void removeCardFromDeck(int number){
+    public void removeCardFromDeck(int number) {
         Platform.runLater(() -> {
             ImageView card = (ImageView) root.lookup("#card" + number);
             card.setImage(null);
@@ -178,18 +170,18 @@ public class View {
         });
     }
 
-    public void displayNameOnTable(PlayerInfo playerInfo, int number){
+    public void displayNameOnTable(PlayerInfo playerInfo, int number) {
         Platform.runLater(() -> {
             Label nameLabel = (Label) root.lookup("#l" + number);
             nameLabel.setText(playerInfo.getName());
         });
     }
 
-    public void displayPoints(List<Integer> pointsList){
+    public void displayPoints(List<Integer> pointsList) {
         Platform.runLater(() -> {
             Pane innerPane = (Pane) root.lookup("#pane1");
-            int counter=1;
-            for (Integer points : pointsList){
+            int counter = 1;
+            for (Integer points : pointsList) {
                 Label pointsLabel = (Label) innerPane.lookup("#points" + counter);
                 pointsLabel.setText(String.valueOf(points));
                 counter++;
@@ -197,7 +189,7 @@ public class View {
         });
     }
 
-    public void addMessageToListView(List<String> chatHistory){
+    public void addMessageToListView(List<String> chatHistory) {
         Platform.runLater(() -> {
             ListView<String> chatListView = (ListView<String>) root.lookup("#chatList");
             chatListView.getItems().clear();
@@ -211,9 +203,7 @@ public class View {
             Pane endPane = (Pane) root.lookup("#endPane");
             endPane.setVisible(true);
             Button endButton = (Button) endPane.lookup("#endButton");
-            endButton.setOnAction(actionEvent -> {
-                setRoomScene();
-            });
+            endButton.setOnAction(actionEvent -> setRoomScene());
 
         });
     }
@@ -223,6 +213,5 @@ public class View {
             Label dealLabel = (Label) root.lookup("#dealLabel");
             dealLabel.setText("Rozdanie #" + dealNumber);
         });
-
     }
 }

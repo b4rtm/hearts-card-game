@@ -39,34 +39,36 @@ public class ServerCommunicationHandler {
 
     synchronized public void readMessagesFromServer(Controller controller) {
         try {
-            while (true) {
+            while (socket.isConnected()) {
                 String action = inputStream.readUTF();
                 switch (action) {
-                    case "PLAYER":
-                        controller.setPlayer((Player) inputStream.readObject());
-                        break;
-                    case "ROOMS":
+                    case "PLAYER" -> controller.setPlayer((Player) inputStream.readObject());
+                    case "ROOMS" -> {
                         List<Room> newRoom = (List<Room>) inputStream.readObject();
                         controller.updateRoomsList(newRoom);
-                        break;
-                    case "CHAT_MESSAGE":
+                    }
+                    case "CHAT_MESSAGE" -> {
                         ChatMessage message = (ChatMessage) inputStream.readObject();
                         controller.updateChat(message);
-                        break;
-                    case "GAME_STATE":
+                    }
+                    case "GAME_STATE" -> {
                         GameState gameState = (GameState) inputStream.readObject();
                         controller.updateGameView(gameState);
-                        break;
+                    }
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            if (socket.isClosed())
+                System.out.println("socket closed");
+            else
+                e.printStackTrace();
         }
     }
 
 
-    public void closeConnection() {
-        // Implementacja zamykania połączenia
+    public void closeConnection(int id) throws IOException {
+        sendToServer("QUIT", id);
+        socket.close();
     }
 
 }
