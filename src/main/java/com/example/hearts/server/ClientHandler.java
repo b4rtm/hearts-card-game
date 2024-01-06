@@ -88,7 +88,7 @@ public class ClientHandler implements Runnable{
                         break;
                     case "CREATE_ROOM":
                         inputStream.readObject();
-                        Room newRoom = new Room();
+                        Room newRoom = new Room(generateRoomId());
                         server.getRooms().add(newRoom);
                         broadcastToAll("ROOMS", server.getRooms());
                         break;
@@ -212,7 +212,7 @@ public class ClientHandler implements Runnable{
         }
         for (Player player1 : getRoomFromServerById().getPlayers()) {
             try {
-                GameState gameState = new GameState(getRoomFromServerById().getRoomId(), player1, getRoomFromServerById().getCardsOnTable(), getRoomFromServerById().getTurn(), pointsList, getRoomFromServerById().isEndGame());
+                GameState gameState = new GameState(getRoomFromServerById().getRoomId(), player1, getRoomFromServerById().getCardsOnTable(), getRoomFromServerById().getTurn(), pointsList, getRoomFromServerById().isEndGame(), getRoomFromServerById().getDealNumber());
 
                 sendMessage("GAME_STATE", gameState, server.getClientOutputStreams().get(player1));
             } catch (IOException e) {

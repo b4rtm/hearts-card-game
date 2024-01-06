@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class HeartsGameTest {
 
-    private Room room =  new Room();
+    private Room room =  new Room(1);
 
     @BeforeEach
     public void initializeRoom(){

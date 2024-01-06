@@ -217,4 +217,12 @@ public class View {
 
         });
     }
+
+    public void displayDealNumber(int dealNumber) {
+        Platform.runLater(() -> {
+            Label dealLabel = (Label) root.lookup("#dealLabel");
+            dealLabel.setText("Rozdanie #" + dealNumber);
+        });
+
+    }
 }

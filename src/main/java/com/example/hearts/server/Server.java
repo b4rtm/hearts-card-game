@@ -49,6 +49,7 @@ public class Server {
                 List<Card> deck = DeckInitializer.initializeDeck();
                 DeckInitializer.dealCardsToPlayers(deck, room.getPlayers());
                 room.setDealNumber(room.getDealNumber()+1);
+                room.setTurnNumber(1);
                 broadcastGameStateToRoom(room);
             }
             if(input.equals("info")){
@@ -70,7 +71,7 @@ public class Server {
         }
         for (Player player1 : room.getPlayers()) {
             try {
-                GameState gameState = new GameState(room.getRoomId(), player1, room.getCardsOnTable(), room.getTurn(), pointsList, room.isEndGame());
+                GameState gameState = new GameState(room.getRoomId(), player1, room.getCardsOnTable(), room.getTurn(), pointsList, room.isEndGame(), room.getDealNumber());
 
                 ClientHandler.sendMessage("GAME_STATE", gameState, clientOutputStreams.get(player1));
             } catch (IOException e) {

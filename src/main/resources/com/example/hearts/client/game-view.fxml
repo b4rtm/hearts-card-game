@@ -4,11 +4,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane fx:id="pane1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="648.0" prefWidth="1350.0" style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="pane1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="715.0" prefWidth="1350.0" style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane fx:id="pane2" layoutX="1113.0" layoutY="29.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
          <children>
@@ -26,29 +27,50 @@
             <Label fx:id="points4" layoutX="131.0" layoutY="169.0" text="0" />
          </children>
       </Pane>
-      <ImageView fx:id="card1" fitHeight="145.0" fitWidth="100.0" layoutX="25.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card2" fitHeight="145.0" fitWidth="100.0" layoutX="125.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card3" fitHeight="145.0" fitWidth="100.0" layoutX="225.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card4" fitHeight="145.0" fitWidth="100.0" layoutX="325.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card5" fitHeight="145.0" fitWidth="100.0" layoutX="425.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card6" fitHeight="145.0" fitWidth="100.0" layoutX="525.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card7" fitHeight="145.0" fitWidth="100.0" layoutX="625.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card8" fitHeight="145.0" fitWidth="100.0" layoutX="725.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card9" fitHeight="145.0" fitWidth="100.0" layoutX="825.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card10" fitHeight="145.0" fitWidth="100.0" layoutX="925.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card11" fitHeight="145.0" fitWidth="100.0" layoutX="1024.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card12" fitHeight="145.0" fitWidth="100.0" layoutX="1125.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="card13" fitHeight="145.0" fitWidth="100.0" layoutX="1225.0" layoutY="470.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="yourCard" fitHeight="145.0" fitWidth="100.0" layoutX="475.0" layoutY="324.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="leftCard" fitHeight="145.0" fitWidth="100.0" layoutX="355.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="rightCard" fitHeight="145.0" fitWidth="100.0" layoutX="575.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="topCard" fitHeight="145.0" fitWidth="100.0" layoutX="475.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="p1" fitHeight="145.0" fitWidth="100.0" layoutX="96.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="p2" fitHeight="145.0" fitWidth="100.0" layoutX="475.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="p3" fitHeight="145.0" fitWidth="100.0" layoutX="875.0" layoutY="157.0" pickOnBounds="true" preserveRatio="true" />
-      <Label fx:id="l2" layoutX="511.0" layoutY="21.0" prefHeight="17.0" prefWidth="92.0" />
-      <Label fx:id="l1" layoutX="37.0" layoutY="229.0" prefHeight="17.0" prefWidth="62.0" />
-      <Label fx:id="l3" layoutX="987.0" layoutY="221.0" prefHeight="17.0" prefWidth="77.0" />
+      <ImageView fx:id="card1" fitHeight="145.0" fitWidth="100.0" layoutX="25.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card2" fitHeight="145.0" fitWidth="100.0" layoutX="125.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card3" fitHeight="145.0" fitWidth="100.0" layoutX="225.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card4" fitHeight="145.0" fitWidth="100.0" layoutX="325.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card5" fitHeight="145.0" fitWidth="100.0" layoutX="425.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card6" fitHeight="145.0" fitWidth="100.0" layoutX="525.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card7" fitHeight="145.0" fitWidth="100.0" layoutX="625.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card8" fitHeight="145.0" fitWidth="100.0" layoutX="725.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card9" fitHeight="145.0" fitWidth="100.0" layoutX="825.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card10" fitHeight="145.0" fitWidth="100.0" layoutX="925.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card11" fitHeight="145.0" fitWidth="100.0" layoutX="1024.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card12" fitHeight="145.0" fitWidth="100.0" layoutX="1125.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="card13" fitHeight="145.0" fitWidth="100.0" layoutX="1225.0" layoutY="550.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="yourCard" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="374.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@cards/2_of_clubs.png" />
+         </image></ImageView>
+      <ImageView fx:id="leftCard" fitHeight="145.0" fitWidth="100.0" layoutX="400.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@cards/2_of_clubs.png" />
+         </image></ImageView>
+      <ImageView fx:id="rightCard" fitHeight="145.0" fitWidth="100.0" layoutX="700.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@cards/2_of_clubs.png" />
+         </image></ImageView>
+      <ImageView fx:id="topCard" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@cards/2_of_clubs.png" />
+         </image></ImageView>
+      <ImageView fx:id="p1" fitHeight="145.0" fitWidth="100.0" layoutX="159.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@cards/2_of_clubs.png" />
+         </image></ImageView>
+      <ImageView fx:id="p2" fitHeight="145.0" fitWidth="100.0" layoutX="550.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@cards/2_of_clubs.png" />
+         </image></ImageView>
+      <ImageView fx:id="p3" fitHeight="145.0" fitWidth="100.0" layoutX="950.0" layoutY="277.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@cards/2_of_clubs.png" />
+         </image></ImageView>
+      <Label fx:id="l2" layoutX="550.0" layoutY="21.0" prefHeight="20.0" prefWidth="100.0" />
+      <Label fx:id="l1" layoutX="159.0" layoutY="250.0" prefHeight="20.0" prefWidth="100.0" />
+      <Label fx:id="l3" layoutX="950.0" layoutY="250.0" prefHeight="20.0" prefWidth="100.0" />
       <ListView fx:id="chatList" layoutX="1113.0" layoutY="246.0" prefHeight="175.0" prefWidth="200.0" />
       <TextField fx:id="chatText" layoutX="1113.0" layoutY="428.0" />
       <Button fx:id="chatButton" layoutX="1266.0" layoutY="428.0" mnemonicParsing="false" text="Wyślij" />
@@ -66,5 +88,10 @@
             </Button>
          </children>
       </Pane>
+      <Label fx:id="dealLabel" layoutX="77.0" layoutY="38.0" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: white;" text="Rozdanie #1" textAlignment="CENTER">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
    </children>
 </Pane>

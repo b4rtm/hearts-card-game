@@ -1,5 +1,7 @@
 package com.example.hearts;
 
+import com.example.hearts.server.ClientHandler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +21,8 @@ public class Room implements Serializable  {
     private boolean endGame;
 
 
-    public Room() {
+    public Room(int roomId) {
+        this.roomId = roomId;
     }
 
     public Room(int roomId, List<Player> players) {

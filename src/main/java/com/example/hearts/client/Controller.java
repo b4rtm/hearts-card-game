@@ -64,6 +64,7 @@ public class Controller {
         }
 
         view.displayPoints(gameState.getPointsList());
+        view.displayDealNumber(gameState.getDealNumber());
 
         for (int cardCounter=1; cardCounter<=gameState.getPlayer().getCards().size(); cardCounter++){
             view.setCardInDeck(cardCounter, gameState.getPlayer().getCards().get(cardCounter -1),gameState.getPlayer() , gameState.getTurn() == gameState.getPlayer().getId());
