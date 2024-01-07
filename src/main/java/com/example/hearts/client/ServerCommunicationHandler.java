@@ -11,12 +11,21 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
+/**
+ * Handles communication with the server, including sending and receiving messages.
+ */
 public class ServerCommunicationHandler {
 
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
 
+    /**
+     * Connects to the server at the specified address and port.
+     *
+     * @param serverAddress The address of the server.
+     * @param port          The port to connect to.
+     */
     public void connectToServer(String serverAddress, int port) {
         try {
             socket = new Socket(serverAddress, port);
@@ -27,6 +36,13 @@ public class ServerCommunicationHandler {
         }
     }
 
+
+    /**
+     * Sends a message to the server with the specified action and data.
+     *
+     * @param action Title of the action serviced by the server.
+     * @param data   The data associated with the action.
+     */
     public void sendToServer(String action, Object data) {
         try {
             outputStream.writeUTF(action);
@@ -37,6 +53,11 @@ public class ServerCommunicationHandler {
         }
     }
 
+    /**
+     * Reads messages from the server and updates the controller.
+     *
+     * @param controller The controller.
+     */
     synchronized public void readMessagesFromServer(Controller controller) {
         try {
             while (socket.isConnected()) {
@@ -65,7 +86,12 @@ public class ServerCommunicationHandler {
         }
     }
 
-
+    /**
+     * Closes the connection to the server.
+     *
+     * @param id The ID of the player to disconnect.
+     * @throws IOException If an IO error occurs.
+     */
     public void closeConnection(int id) throws IOException {
         sendToServer("QUIT", id);
         socket.close();

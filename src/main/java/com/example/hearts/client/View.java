@@ -18,6 +18,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * The View class handles the graphical user interface, updating and displaying  UI elements.
+ */
 public class View {
 
     public static final String ABSOLUTE_CARD_IMAGE_PATH = "file:" + "C:\\Users\\barte\\IdeaProjects\\Hearts\\src\\main\\resources\\com\\example\\hearts\\client\\cards\\";
@@ -29,10 +32,20 @@ public class View {
     private Button newRoomButton;
     private Controller controller;
 
+    /**
+     * Constructs a new View with the specified controller.
+     *
+     * @param controller The controller associated with this view.
+     */
     public View(Controller controller) {
         this.controller = controller;
     }
 
+    /**
+     * Loads the room view when called in response to a button click event.
+     *
+     * @param event The action event triggering the method call.
+     */
     public void loadRoomView(ActionEvent event) {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("rooms-view.fxml"));
@@ -62,10 +75,16 @@ public class View {
         });
     }
 
+    /**
+     * Sets the current scene to the room scene.
+     */
     public void setRoomScene() {
         this.stage.setScene(roomScene);
     }
 
+    /**
+     * Loads the game view, initializing the UI elements.
+     */
     public void loadGameView() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("game-view.fxml"));
@@ -88,6 +107,9 @@ public class View {
         });
     }
 
+    /**
+     * Initializes the chat UI elements.
+     */
     private void initChat() {
         Platform.runLater(() -> {
             Button sendButton = (Button) root.lookup("#chatButton");
@@ -99,7 +121,11 @@ public class View {
         });
     }
 
-
+    /**
+     * Displays the cards, and names.
+     *
+     * @param room The room for which to display the game view.
+     */
     public void displayGameView(Room room) {
         Platform.runLater(() -> {
             if (room.getPlayers().size() < 4) {
@@ -120,6 +146,11 @@ public class View {
         });
     }
 
+    /**
+     * Updates the room list view with the provided list of rooms.
+     *
+     * @param rooms The list of rooms to be displayed.
+     */
     public void updateRoomListView(List<Room> rooms) {
         Platform.runLater(() -> {
             roomsList = (ListView<Room>) roomsPane.lookup("#roomsList");
@@ -135,6 +166,12 @@ public class View {
         });
     }
 
+    /**
+     * Displays a card on the table.
+     *
+     * @param card      The card to be displayed.
+     * @param elementId The ID of the UI element representing the card.
+     */
     public void displayCardOnTable(Card card, String elementId) {
         Platform.runLater(() -> {
             if (card != null) {
@@ -148,6 +185,14 @@ public class View {
         });
     }
 
+    /**
+     * Sets a card in the player's deck and handles onclick.
+     *
+     * @param cardCounter The position of the card in the deck.
+     * @param card        The card to be displayed.
+     * @param player      The player to whom the card belongs.
+     * @param setOnClick  Whether to set a click event for the card.
+     */
     public void setCardInDeck(int cardCounter, Card card, Player player, boolean setOnClick) {
         Platform.runLater(() -> {
             ImageView cardImg = (ImageView) root.lookup("#card" + cardCounter);
@@ -162,6 +207,11 @@ public class View {
         });
     }
 
+    /**
+     * Removes a card from the player's deck.
+     *
+     * @param number The position of the card to be removed.
+     */
     public void removeCardFromDeck(int number) {
         Platform.runLater(() -> {
             ImageView card = (ImageView) root.lookup("#card" + number);
@@ -170,6 +220,12 @@ public class View {
         });
     }
 
+    /**
+     * Displays the player's name on the table.
+     *
+     * @param playerInfo The information about the player.
+     * @param number     The position number on the table.
+     */
     public void displayNameOnTable(PlayerInfo playerInfo, int number) {
         Platform.runLater(() -> {
             Label nameLabel = (Label) root.lookup("#l" + number);
@@ -177,6 +233,11 @@ public class View {
         });
     }
 
+    /**
+     * Displays the points.
+     *
+     * @param pointsList The list of points to be displayed.
+     */
     public void displayPoints(List<Integer> pointsList) {
         Platform.runLater(() -> {
             Pane innerPane = (Pane) root.lookup("#pane1");
@@ -189,6 +250,11 @@ public class View {
         });
     }
 
+    /**
+     * Adds a message to the chat list.
+     *
+     * @param chatHistory The chat history to be displayed.
+     */
     public void addMessageToListView(List<String> chatHistory) {
         Platform.runLater(() -> {
             ListView<String> chatListView = (ListView<String>) root.lookup("#chatList");
@@ -198,6 +264,9 @@ public class View {
         });
     }
 
+    /**
+     * Displays the end game panel and sets up the corresponding button action.
+     */
     public void displayEndGamePanel() {
         Platform.runLater(() -> {
             Pane endPane = (Pane) root.lookup("#endPane");
@@ -208,6 +277,11 @@ public class View {
         });
     }
 
+    /**
+     * Displays the deal number.
+     *
+     * @param dealNumber The deal number to be displayed.
+     */
     public void displayDealNumber(int dealNumber) {
         Platform.runLater(() -> {
             Label dealLabel = (Label) root.lookup("#dealLabel");

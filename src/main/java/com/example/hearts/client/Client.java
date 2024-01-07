@@ -8,7 +8,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * The main class for the Hearts game client application.
+ */
 public class Client extends Application {
+
+    /**
+     * The entry point for the application.
+     *
+     * @param stage The primary stage for this application.
+     */
     @Override
     public void start(Stage stage) {
         try {
@@ -18,6 +27,12 @@ public class Client extends Application {
         }
     }
 
+    /**
+     * Initializes the controller and stage for the application.
+     *
+     * @param stage The primary stage for this application.
+     * @throws IOException If an error occurs while loading the FXML file.
+     */
     private static void initControllerAndStage(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Client.class.getResource("hello-view.fxml"));
         Pane pane = fxmlLoader.load();

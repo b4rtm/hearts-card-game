@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The ClientHandler class manages the communication with a connected client.
+ */
 public class ClientHandler implements Runnable {
 
     private Player player;
@@ -20,6 +23,14 @@ public class ClientHandler implements Runnable {
     private final Server server;
     private Room room;
 
+    /**
+     * Constructs a new ClientHandler for the specified socket, player ID, server, and output stream.
+     *
+     * @param socket       The socket associated with the client.
+     * @param id           The ID of the player.
+     * @param server       The server instance.
+     * @param outputStream The output stream for sending messages to the client.
+     */
     public ClientHandler(Socket socket, int id, Server server, ObjectOutputStream outputStream) {
         this.socket = socket;
         this.player = new Player(id);
@@ -38,6 +49,9 @@ public class ClientHandler implements Runnable {
         return room.getRoomId();
     }
 
+    /**
+     * Runs the main loop for handling client messages.
+     */
     @Override
     public void run() {
         try {
@@ -65,8 +79,7 @@ public class ClientHandler implements Runnable {
                     }
                     case "JOIN_ROOM" -> {
                         Integer roomId = (Integer) inputStream.readObject();
-                        this.room = findRoomById(server.getRooms(), roomId);
-                        joinRoom();
+                        joinRoom(roomId);
 
                         if (isRoomFull()) {
                             initializeGame();
@@ -75,19 +88,23 @@ public class ClientHandler implements Runnable {
                     }
                     case "MOVE" -> {
                         Move move = (Move) inputStream.readObject();
-                        if (!HeartsRules.isMoveValid(move, findRoomById(server.getRooms(), this.room.getRoomId())))
-                            break;
-                        this.room.findPlayerById(move.getPlayer().getId()).getCards().remove(move.getCard());
-                        setCardOnTable(move);
-                        this.room.setNextTurn();
+                        synchronized (server.getRooms()) {
+                            if (!HeartsRules.isMoveValid(move, findRoomById(server.getRooms(), this.room.getRoomId())))
+                                break;
+                            this.room.findPlayerById(move.getPlayer().getId()).getCards().remove(move.getCard());
+                            setCardOnTable(move);
+                            this.room.setNextTurn();
+                        }
                         broadcastGameStateToRoom();
                     }
                     case "CLEAR_TABLE" -> {
                         Integer roomToCleanId = (Integer) inputStream.readObject();
-                        int looser = HeartsRules.setPointsToPlayersAfterTurn(findRoomById(server.getRooms(), roomToCleanId));
-                        clearRoom(roomToCleanId, looser);
-                        if (this.room.getTurnNumber() == 14) {
-                            startNewDeal();
+                        synchronized (server.getRooms()) {
+                            int looser = HeartsRules.setPointsToPlayersAfterTurn(findRoomById(server.getRooms(), roomToCleanId));
+                            clearRoom(roomToCleanId, looser);
+                            if (this.room.getTurnNumber() == 14) {
+                                startNewDeal();
+                            }
                         }
                         broadcastGameStateToRoom();
                     }
@@ -102,7 +119,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void disconnectPlayer(Integer playerId) throws IOException {
+    /**
+     * Disconnects a player based on the specified player ID.
+     *
+     * @param playerId The ID of the player to be disconnected.
+     * @throws IOException If an I/O error occurs during the disconnection process.
+     */
+    synchronized private void disconnectPlayer(Integer playerId) throws IOException {
         Player playerToDelete = Player.getPlayerById(room.getPlayers(), playerId);
         server.getClientOutputStreams().remove(playerToDelete);
         if (this.room != null)
@@ -110,7 +133,10 @@ public class ClientHandler implements Runnable {
         socket.close();
     }
 
-    private void startNewDeal() {
+    /**
+     * Starts a new deal by shuffling and dealing cards.
+     */
+    synchronized private void startNewDeal() {
         List<Card> deck = DeckInitializer.initializeDeck();
         DeckInitializer.dealCardsToPlayers(deck, this.room.getPlayers());
         this.room.setDealNumber(this.room.getDealNumber() + 1);
@@ -121,7 +147,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void clearRoom(Integer roomToCleanId, int looser) {
+    /**
+     * Clears the table after a turn and updates the game state.
+     *
+     * @param roomToCleanId The ID of the room to be cleaned.
+     * @param looser        The ID of the player who lost the turn.
+     */
+    synchronized private void clearRoom(Integer roomToCleanId, int looser) {
         Room roomToClean = findRoomById(server.getRooms(), roomToCleanId);
         for (Map.Entry<PlayerInfo, Card> entry : roomToClean.getCardsOnTable().entrySet()) {
             entry.setValue(null);
@@ -131,7 +163,12 @@ public class ClientHandler implements Runnable {
         this.room.setTurnNumber(this.room.getTurnNumber() + 1);
     }
 
-    private void setCardOnTable(Move move) {
+    /**
+     * Places a card on the table based on the player's move.
+     *
+     * @param move The move made by the player.
+     */
+    synchronized private void setCardOnTable(Move move) {
         PlayerInfo foundPlayer = null;
         Set<PlayerInfo> playerInfos = this.room.getCardsOnTable().keySet();
         for (PlayerInfo playerInfo : playerInfos) {
@@ -143,7 +180,10 @@ public class ClientHandler implements Runnable {
         this.room.getCardsOnTable().replace(foundPlayer, move.getCard());
     }
 
-    private void initializeGame() {
+    /**
+     * Initializes the game by dealing cards and setting up initial game state.
+     */
+    synchronized private void initializeGame() {
         List<Card> deck = DeckInitializer.initializeDeck();
         DeckInitializer.dealCardsToPlayers(deck, room.getPlayers());
 
@@ -157,28 +197,52 @@ public class ClientHandler implements Runnable {
         this.room.setTurnNumber(1);
     }
 
+    /**
+     * Checks if the room is full (has 4 players).
+     *
+     * @return True if the room is full, false otherwise.
+     */
     private boolean isRoomFull() {
         return room.getPlayers().size() == 4;
     }
 
-    private void joinRoom() {
+    /**
+     * Handles a player joining a room by setting up the player's points and broadcasting the updated room list.
+     */
+    synchronized private void joinRoom(int roomId) {
+        this.room = findRoomById(server.getRooms(), roomId);
         player.setPoints(0);
         room.getPlayers().add(player);
         broadcastToAll("ROOMS", server.getRooms());
     }
 
-    private void createRoom() {
+    /**
+     * Creates a new room and broadcasts the updated room list to all clients.
+     */
+    synchronized private void createRoom() {
         Room newRoom = new Room(generateRoomId());
         server.getRooms().add(newRoom);
         broadcastToAll("ROOMS", server.getRooms());
     }
 
-    private void sendRoomsToClient() throws IOException {
+    /**
+     * Sends the list of available rooms to the client.
+     *
+     * @throws IOException If an I/O error occurs during the message sending process.
+     */
+    synchronized private void sendRoomsToClient() throws IOException {
         outputStream.writeUTF("ROOMS");
         List<Room> rooms = new ArrayList<>(server.getRooms());
         outputStream.writeObject(rooms);
     }
 
+    /**
+     * Finds a room with the specified ID in the provided list of rooms.
+     *
+     * @param rooms    The list of rooms to search.
+     * @param targetId The target room ID.
+     * @return The room with the specified ID, or {@code null} if not found.
+     */
     public Room findRoomById(List<Room> rooms, int targetId) {
         for (Room room : rooms) {
             if (room.getRoomId() == targetId) {
@@ -188,11 +252,21 @@ public class ClientHandler implements Runnable {
         return null;
     }
 
-
-    private int generateRoomId() {
+    /**
+     * Generates a unique room ID based on the current number of rooms.
+     *
+     * @return The generated room ID.
+     */
+    synchronized private int generateRoomId() {
         return server.getRooms().size() + 1;
     }
 
+    /**
+     * Broadcasts a message with the specified action and data to all connected clients.
+     *
+     * @param action The action of the message.
+     * @param data   The data to be broadcasted.
+     */
     synchronized private void broadcastToAll(String action, Object data) {
         for (ObjectOutputStream outputStr : server.getClientOutputStreams().values()) {
             try {
@@ -203,6 +277,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Broadcasts the current game state to all players in the room.
+     */
     synchronized public void broadcastGameStateToRoom() {
         List<Integer> pointsList = new ArrayList<>();
         for (Player player : this.room.getPlayers()) {
@@ -218,13 +295,21 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void goToNextDeal() {
+    /**
+     * Proceeds to the next deal by shuffling and dealing cards.
+     */
+    synchronized public void goToNextDeal() {
         List<Card> deck = DeckInitializer.initializeDeck();
         DeckInitializer.dealCardsToPlayers(deck, this.room.getPlayers());
         this.room.setDealNumber(this.room.getDealNumber() + 1);
         this.room.setTurnNumber(1);
     }
 
+    /**
+     * Broadcasts a chat message to all players in the room.
+     *
+     * @param message The chat message to be broadcasted.
+     */
     synchronized private void broadcastMessageToRoom(ChatMessage message) {
         for (Player player1 : this.room.getPlayers()) {
             try {
@@ -235,6 +320,14 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Sends a message with the specified action and data to the specified output stream.
+     *
+     * @param action     The action of the message.
+     * @param data       The data to be sent.
+     * @param outputStr  The output stream for sending the message.
+     * @throws IOException If an I/O error occurs during the message sending process.
+     */
     public static void sendMessage(String action, Object data, ObjectOutputStream outputStr) throws IOException {
         outputStr.reset();
         outputStr.writeUTF(action);

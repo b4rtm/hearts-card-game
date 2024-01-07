@@ -9,8 +9,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The DeckInitializer class provides methods for initializing and dealing cards in a deck.
+ */
 public class DeckInitializer {
 
+    /**
+     * Initializes a shuffled deck of cards.
+     *
+     * @return The list of initialized and shuffled cards.
+     */
     public static List<Card> initializeDeck() {
         List<Card> deck = new ArrayList<>();
 
@@ -28,6 +36,12 @@ public class DeckInitializer {
         return deck;
     }
 
+    /**
+     * Converts the Rank enum to a string representation.
+     *
+     * @param rank The Rank enum value.
+     * @return The string representation of the Rank.
+     */
     private static String convertRankToString(Rank rank) {
         return switch (rank) {
             case TWO -> "2";
@@ -43,6 +57,12 @@ public class DeckInitializer {
         };
     }
 
+    /**
+     * Deals cards from the deck to the specified list of players.
+     *
+     * @param deck    The deck of cards.
+     * @param players The list of players to whom cards will be dealt.
+     */
     public static void dealCardsToPlayers(List<Card> deck, List<Player> players) {
         players.forEach(player -> player.getCards().clear());
         for (int i = 0; i < players.size(); i++) {
